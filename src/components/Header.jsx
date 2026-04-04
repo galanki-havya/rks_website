@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import LogoImg from "../assets/logo.jpg"; 
+// Ensure this path is correct in your project structure
+import logo from "../assets/logo.png"; 
 
 const colors = {
-  primary: "#002147", 
-  gold: "#C9A227", 
+  primary: "#002147", // Deep Navy
+  gold: "#C9A227",    // Premium Gold
   white: "#FFFFFF",
   text: "#333333",
   lightGray: "#F8F9FA",
@@ -19,6 +20,7 @@ function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Sets scrolled state if user scrolls more than 50px
       setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
@@ -37,9 +39,19 @@ function Header() {
   return (
     <header style={{
       ...styles.headerWrapper,
-      boxShadow: isScrolled ? "0 4px 20px rgba(0,0,0,0.15)" : "0 2px 10px rgba(0,0,0,0.05)"
+      // Dynamic height and shadow on scroll
+      paddingTop: isScrolled ? "0px" : "5px",
+      boxShadow: isScrolled ? "0 10px 30px rgba(0,0,0,0.1)" : "none",
+      borderBottom: isScrolled ? "none" : `1px solid ${colors.lightGray}`
     }}>
-      <div style={styles.topBar}>
+      {/* Top Utility Bar */}
+      <div style={{
+        ...styles.topBar,
+        height: isScrolled ? "0px" : "35px",
+        opacity: isScrolled ? 0 : 1,
+        overflow: "hidden",
+        transition: "all 0.3s ease"
+      }}>
         <div style={styles.containerFlex}>
           <div style={styles.topBarLeft}>
             <span style={styles.topItem}>📞 +91 77998 84561</span>
@@ -52,19 +64,23 @@ function Header() {
         </div>
       </div>
 
+      {/* Main Navigation Bar */}
       <div style={styles.mainHeader}>
         <div style={styles.containerFlex}>
           
           <Link to="/" style={{ textDecoration: "none" }}>
             <div style={styles.logoContainer}>
               <img 
-                src={LogoImg} 
-                alt="RKS Next Gen School Logo" 
-                style={styles.logoImage}
+                src={logo} // Fixed: matches the import variable 'logo'
+                alt="RKS Next Gen Schools Logo" 
+                style={{
+                    ...styles.logoImage,
+                    height: isScrolled ? "50px" : "65px" // Logo shrinks on scroll
+                }}
                 onError={(e) => { e.target.style.display = 'none'; }} 
               />
               <div style={styles.brandText}>
-                <h1 style={styles.schoolName}>RKS NEXT GEN SCHOOL</h1>
+                <h1 style={styles.schoolName}>RKS NEXT GEN SCHOOLS</h1>
                 <p style={styles.schoolSubtitle}>INTEGRITY • INNOVATION • EXCELLENCE</p>
               </div>
             </div>
@@ -99,8 +115,16 @@ function Header() {
                 <Link 
                   to="/admissions" 
                   style={styles.enrollBtn}
-                  onMouseEnter={(e) => e.target.style.transform = "scale(1.05)"}
-                  onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = colors.primary;
+                    e.target.style.color = colors.white;
+                    e.target.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = colors.gold;
+                    e.target.style.color = colors.primary;
+                    e.target.style.transform = "translateY(0)";
+                  }}
                 >
                   ADMISSIONS 2026-27
                 </Link>
@@ -120,7 +144,7 @@ const styles = {
     top: 0,
     zIndex: 1000,
     backgroundColor: colors.white,
-    transition: "all 0.3s ease",
+    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
   },
   containerFlex: {
     maxWidth: "1300px",
@@ -128,15 +152,16 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: "0 20px",
+    padding: "0 30px",
   },
   topBar: {
     backgroundColor: colors.primary,
     color: colors.white,
-    padding: "8px 0",
     fontSize: "12px",
     fontWeight: "500",
     letterSpacing: "0.5px",
+    display: "flex",
+    alignItems: "center",
   },
   topBarLeft: {
     display: "flex",
@@ -158,8 +183,8 @@ const styles = {
     letterSpacing: "1px"
   },
   mainHeader: {
-    padding: "12px 0",
-    backgroundColor: colors.white,
+    padding: "10px 0",
+    backgroundColor: "transparent",
   },
   logoContainer: {
     display: "flex",
@@ -167,16 +192,16 @@ const styles = {
     alignItems: "center",
   },
   logoImage: {
-    height: "65px",
     width: "auto",
     objectFit: "contain",
+    transition: "height 0.3s ease",
   },
   brandText: {
     display: "flex",
     flexDirection: "column",
   },
   schoolName: {
-    fontSize: "22px",
+    fontSize: "20px",
     margin: 0,
     color: colors.primary,
     fontWeight: "900",
@@ -184,15 +209,15 @@ const styles = {
     letterSpacing: "-0.5px",
   },
   schoolSubtitle: {
-    fontSize: "9px",
+    fontSize: "8px",
     color: colors.gold,
     margin: "2px 0 0 0",
-    letterSpacing: "2.2px",
+    letterSpacing: "2px",
     fontWeight: "700",
   },
   navList: {
     display: "flex",
-    gap: "20px",
+    gap: "25px",
     listStyle: "none",
     alignItems: "center",
     margin: 0,
@@ -202,23 +227,24 @@ const styles = {
     textDecoration: "none",
     fontSize: "13px",
     fontWeight: "700",
-    padding: "8px 0",
+    padding: "5px 0",
     position: "relative",
     transition: "color 0.3s ease",
     textTransform: "uppercase",
+    letterSpacing: "0.5px"
   },
   underline: {
     height: "2px",
     backgroundColor: colors.gold,
     position: "absolute",
-    bottom: 0,
+    bottom: "-2px",
     left: 0,
     transition: "width 0.3s ease",
   },
   enrollBtn: {
     background: colors.gold,
     color: colors.primary,
-    padding: "10px 20px",
+    padding: "12px 22px",
     textDecoration: "none",
     fontWeight: "800",
     fontSize: "12px",
@@ -226,7 +252,8 @@ const styles = {
     letterSpacing: "0.5px",
     transition: "all 0.3s ease",
     marginLeft: "10px",
-    boxShadow: "0 4px 10px rgba(201, 162, 39, 0.2)",
+    boxShadow: "0 4px 15px rgba(201, 162, 39, 0.2)",
+    display: "inline-block"
   },
 };
 
