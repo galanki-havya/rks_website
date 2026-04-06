@@ -1,247 +1,192 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import GallerySlider from "../components/GallerySlider";
 
-const colors = {
-  midnight: "#001B36", 
-  premiumGold: "#B38B45", 
-  white: "#FFFFFF",
-  platinum: "#E0E0E0",
-  borderMuted: "rgba(179, 139, 69, 0.3)"
-};
+const Hero = () => {
+  const [show, setShow] = useState(false);
 
-function Hero() {
-  const navigate = useNavigate();
-  const [isHovered, setIsHovered] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-
-  // Trigger fade-in animation on mount
   useEffect(() => {
-    setIsVisible(true);
+    document.body.style.margin = "0";
+    const timer = setTimeout(() => setShow(true), 300);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div style={styles.hero}>
-      {/* Visual Enhancements */}
-      <div style={styles.overlay}></div>
-      <div style={styles.blob1}></div>
-      <div style={styles.blob2}></div>
-      
-      <div style={{
-        ...styles.container,
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateY(0)" : "translateY(20px)",
-        transition: "opacity 1s ease, transform 1s ease"
-      }}>
-        <div style={styles.content}>
-          <div style={styles.badge}>ESTABLISHED EXCELLENCE</div>
-          
-          <h1 style={styles.title}>
-            Inspiring Young Minds <br /> 
-            <span style={{ color: colors.premiumGold, position: 'relative' }}>
-                To Shine Tomorrow.
-            </span>
-          </h1>
+    <div style={styles.container}>
+      {/* 1. BACKGROUND SLIDER LAYER */}
+      <div style={styles.bgWrapper}>
+        <GallerySlider />
+        <div style={styles.premiumOverlay}></div>
+      </div>
 
-          <p style={styles.subtitle}>
-            RKS Next Gen School (Play School - Grade X) provides a world-class 
-            foundation through <span style={{color: colors.white, fontWeight: '500'}}>concept-based learning</span> and IIT-JEE / NEET orientation, 
-            preparing the leaders of the next generation.
+      {/* 2. LEFT CONTENT PANEL */}
+      <div
+        style={{
+          ...styles.content,
+          opacity: show ? 1 : 0,
+          transform: show ? "translateX(0)" : "translateX(-50px)",
+        }}
+      >
+        <p style={styles.topLine}>BUILDING A FOUNDATION FOR EXCELLENCE</p>
+
+        <h1 style={styles.title}>
+          <span style={{ color: "#fff" }}>Empowering</span> 
+          <br /> 
+          <span style={{ color: "#C5A059" }}>Future Leaders</span>
+        </h1>
+
+        <div style={styles.goldLine}></div>
+
+        <p style={styles.subtitle}>
+          Empowering students with innovation, knowledge, and strong values to
+          shape future leaders in a dynamic world.
+        </p>
+
+        <div style={styles.quoteWrapper}>
+          <div style={styles.quoteVerticalLine}></div>
+          <p style={styles.quoteText}>
+            "Arise, awake, and stop not until the goal is reached."
           </p>
+        </div>
 
-          <div style={styles.btnContainer}>
-            <button
-              style={{
-                ...styles.btn,
-                ...(isHovered ? styles.btnHover : {}),
-              }}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              onClick={() => navigate("/admissions")}
-            >
-              Admissions Open 2026-27
-            </button>
-            <button 
-              style={styles.secondaryBtn}
-              onMouseEnter={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
-              onMouseLeave={(e) => e.target.style.background = "transparent"}
-              onClick={() => navigate("/about")}
-            >
-              View Prospectus
-            </button>
-          </div>
-          
-          <div style={styles.trustFooter}>
-            <div style={styles.footerItem}>
-                <span style={styles.check}>✓</span>
-                <span style={styles.footerText}>CBSE CURRICULUM</span>
-            </div>
-            <span style={styles.dot}>•</span>
-            <div style={styles.footerItem}>
-                <span style={styles.check}>✓</span>
-                <span style={styles.footerText}>13 YEARS EXCELLENCE</span>
-            </div>
-            <span style={styles.dot}>•</span>
-            <div style={styles.footerItem}>
-                <span style={styles.check}>✓</span>
-                <span style={styles.footerText}>DAY CUM RESIDENTIAL</span>
-            </div>
-          </div>
+        <div style={styles.buttons}>
+          <button 
+            style={styles.primaryBtn}
+            onMouseOver={(e) => e.target.style.background = "#D4AF37"}
+            onMouseOut={(e) => e.target.style.background = "#C5A059"}
+          >
+            Admissions 2026-27
+          </button>
+          <button 
+            style={styles.secondaryBtn}
+            onMouseOver={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
+            onMouseOut={(e) => e.target.style.background = "transparent"}
+          >
+            Learn More
+          </button>
         </div>
       </div>
+
+      <style>{`
+        button { transition: all 0.3s ease-in-out !important; }
+      `}</style>
     </div>
   );
-}
+};
 
 const styles = {
-  hero: {
-    width: "100%",
-    minHeight: "100vh", // Full screen height for more impact
-    background: colors.midnight,
-    backgroundImage: `radial-gradient(circle at 20% 30%, rgba(179, 139, 69, 0.05) 0%, transparent 50%), 
-                      linear-gradient(135deg, ${colors.midnight} 0%, #000D1A 100%)`,
-    display: "flex",
-    alignItems: "center", // Centered vertically for a hero feel
-    justifyContent: "flex-start",
+  container: {
+    width: "100vw",
+    height: "100vh",
     position: "relative",
     overflow: "hidden",
-    paddingTop: "80px", 
+    backgroundColor: "#001F3F", 
+    fontFamily: "'Inter', 'Segoe UI', sans-serif",
   },
-  overlay: {
+  bgWrapper: {
     position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')", // Subtle texture
-    opacity: 0.1,
-    pointerEvents: "none",
+    inset: 0,
+    zIndex: 1,
   },
-  container: {
-    width: "100%",
-    maxWidth: "1300px",
-    margin: "0 auto",
-    padding: "0 60px",
-    zIndex: 2,
+  premiumOverlay: {
+    position: "absolute",
+    inset: 0,
+    // Darker on the far left to ensure the text is razor-sharp against images
+    background: "linear-gradient(to right, rgba(0, 31, 63, 1) 0%, rgba(0, 31, 63, 0.8) 30%, rgba(0, 31, 63, 0.4) 60%, rgba(0, 0, 0, 0.1) 100%)",
   },
   content: {
-    maxWidth: "850px", 
-    textAlign: "left",
+    position: "relative",
+    zIndex: 10,
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "flex-start", // Force all children to the left
+    paddingLeft: "6%",         // Standard professional margin
+    maxWidth: "800px", 
+    color: "#fff",
+    transition: "all 1.2s cubic-bezier(0.19, 1, 0.22, 1)",
+    textAlign: "left",         // Explicit text alignment
   },
-  badge: {
-    color: colors.premiumGold,
+  topLine: {
+    color: "#C5A059",
+    letterSpacing: "4px",
     fontSize: "12px",
+    marginBottom: "10px",
     fontWeight: "700",
-    letterSpacing: "3px",
-    marginBottom: "20px",
-    display: "inline-block",
-    borderLeft: `3px solid ${colors.premiumGold}`,
-    paddingLeft: "12px",
-  },
-  blob1: {
-    position: "absolute",
-    width: "800px",
-    height: "800px",
-    background: "rgba(179, 139, 69, 0.07)",
-    borderRadius: "50%",
-    top: "-200px",
-    right: "-100px",
-    filter: "blur(120px)",
-    animation: "pulse 10s infinite alternate",
-  },
-  blob2: {
-    position: "absolute",
-    width: "600px",
-    height: "600px",
-    background: "rgba(0, 80, 150, 0.15)",
-    borderRadius: "50%",
-    bottom: "-150px",
-    left: "-50px",
-    filter: "blur(100px)",
+    textTransform: "uppercase",
+    marginRight: "auto",      // Pushes to left
   },
   title: {
-    fontSize: "clamp(38px, 5vw, 64px)", // Slightly larger
-    lineHeight: "1.1",
-    fontWeight: "800",
-    color: colors.white,
-    marginBottom: "24px",
-    letterSpacing: "-2px",
+    fontSize: "clamp(42px, 6vw, 72px)",
+    fontWeight: "900",
+    lineHeight: "1.05",
+    margin: 0,
+    textAlign: "left",
+  },
+  goldLine: {
+    width: "70px",
+    height: "5px",
+    background: "#C5A059",
+    margin: "25px 0",
+    borderRadius: "2px",
   },
   subtitle: {
-    fontSize: "clamp(16px, 1.2vw, 20px)",
-    marginBottom: "40px",
-    color: colors.platinum,
-    lineHeight: "1.8",
-    maxWidth: "650px",
-    fontWeight: "300",
-    opacity: 0.9,
+    fontSize: "20px",
+    lineHeight: "1.6",
+    color: "rgba(255,255,255,0.9)",
+    maxWidth: "550px",
+    fontWeight: "400",
+    margin: "0 0 20px 0",     // Bottom margin only to keep left align
+    textAlign: "left",
   },
-  btnContainer: {
+  quoteWrapper: {
+    display: "flex",
+    alignItems: "center",
+    gap: "15px",
+    marginTop: "10px",
+    justifyContent: "flex-start",
+  },
+  quoteVerticalLine: {
+    width: "3px",
+    height: "30px",
+    background: "#C5A059",
+  },
+  quoteText: {
+    fontStyle: "italic",
+    fontSize: "15px",
+    color: "rgba(255,255,255,0.6)",
+    margin: 0,
+    textAlign: "left",
+  },
+  buttons: {
+    marginTop: "40px",
     display: "flex",
     gap: "20px",
     justifyContent: "flex-start",
-    flexWrap: "wrap",
-    marginBottom: "60px",
   },
-  btn: {
-    padding: "18px 36px",
-    fontSize: "14px",
-    fontWeight: "700",
-    backgroundColor: colors.premiumGold,
-    color: colors.midnight,
+  primaryBtn: {
+    padding: "16px 35px",
+    background: "#C5A059",
+    color: "#001F3F",
     border: "none",
-    borderRadius: "6px", // Softer corners
-    cursor: "pointer",
-    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    fontWeight: "800",
     textTransform: "uppercase",
-    letterSpacing: "1.5px",
-    boxShadow: "0 4px 15px rgba(0,0,0,0.3)",
-  },
-  btnHover: {
-    transform: "translateY(-3px)",
-    backgroundColor: "#D4AF37",
-    boxShadow: "0 12px 24px rgba(179, 139, 69, 0.3)",
+    fontSize: "13px",
+    letterSpacing: "1px",
+    cursor: "pointer",
+    borderRadius: "4px",
   },
   secondaryBtn: {
-    padding: "18px 36px",
-    fontSize: "14px",
-    fontWeight: "600",
-    backgroundColor: "transparent",
-    color: colors.white,
-    border: "1px solid rgba(255,255,255,0.3)",
-    borderRadius: "6px",
-    cursor: "pointer",
-    transition: "0.3s",
+    padding: "16px 35px",
+    border: "2px solid rgba(255,255,255,0.3)",
+    background: "transparent",
+    color: "#fff",
+    fontWeight: "700",
     textTransform: "uppercase",
-    letterSpacing: "1.5px",
-    backdropFilter: "blur(5px)",
-  },
-  trustFooter: {
-    display: "flex",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    gap: "30px",
-    flexWrap: "wrap",
-    borderTop: "1px solid rgba(255,255,255,0.1)",
-    paddingTop: "30px",
-  },
-  footerItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-  },
-  check: {
-    color: colors.premiumGold,
-    fontWeight: "bold",
-  },
-  footerText: {
-    fontSize: "12px",
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.6)",
+    fontSize: "13px",
     letterSpacing: "1px",
-  },
-  dot: {
-    color: "rgba(255,255,255,0.2)",
-    fontSize: "16px",
+    cursor: "pointer",
+    borderRadius: "4px",
   }
 };
 
