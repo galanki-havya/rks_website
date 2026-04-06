@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 const colors = {
@@ -9,16 +9,42 @@ const colors = {
 
 function Footer() {
   const currentYear = new Date().getFullYear();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const footerStyles = {
+    ...styles.footerContainer,
+    padding: isMobile ? "40px 20px 20px" : "30px 20px 15px",
+  };
+
+  const gridStyles = {
+    ...styles.contentGrid,
+    gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(180px, 1fr))",
+    textAlign: isMobile ? "center" : "left",
+    gap: isMobile ? "35px" : "25px",
+  };
+
+  const columnStyles = {
+    ...styles.column,
+    alignItems: isMobile ? "center" : "flex-start",
+  };
 
   return (
-    <footer style={styles.footerContainer}>
-      <div style={styles.contentGrid}>
+    <footer style={footerStyles}>
+      <div style={gridStyles}>
 
         {/* Column 1: Brand & Socials */}
-        <div style={styles.column}>
-          <h3 style={styles.columnTitle}>RKS Next Gen</h3>
+        <div style={columnStyles}>
+          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
+            RKS Next Gen
+          </h3>
           <p style={styles.schoolDescription}>
-            Nurturing discipline and innovation through educational excellence.
+            Nurturing discipline and innovation through educational excellence since 2011.
           </p>
           <div style={styles.socialIcons}>
             <span style={styles.iconCircle}>f</span>
@@ -28,35 +54,44 @@ function Footer() {
         </div>
 
         {/* Column 2: Quick Links */}
-        <div style={styles.column}>
-          <h3 style={styles.columnTitle}>Links</h3>
-          <ul style={styles.linkList}>
+        <div style={columnStyles}>
+          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
+            Quick Links
+          </h3>
+          <ul style={{...styles.linkList, alignItems: isMobile ? "center" : "flex-start"}}>
             <li><Link to="/" style={styles.link}>Home</Link></li>
-            <li><Link to="/about" style={styles.link}>About</Link></li>
+            <li><Link to="/about" style={styles.link}>About Us</Link></li>
+            <li><Link to="/academics" style={styles.link}>Academics</Link></li>
             <li><Link to="/contact" style={styles.link}>Admissions</Link></li>
           </ul>
         </div>
 
         {/* Column 3: Locations */}
-        <div style={styles.column}>
-          <h3 style={styles.columnTitle}>Campuses</h3>
-          <p style={styles.contactItem}><b>Vinayaka:</b> A. Rangampeta, TPT</p>
-          <p style={styles.contactItem}><b>Veeksha:</b> Bairagipatteda, TPT</p>
+        <div style={columnStyles}>
+          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
+            Our Campuses
+          </h3>
+          <p style={styles.contactItem}><b>Vinayaka:</b> A. Rangampeta, Tirupati</p>
+          <p style={styles.contactItem}><b>Veeksha:</b> Bairagipatteda, Tirupati</p>
         </div>
 
         {/* Column 4: Contact */}
-        <div style={styles.column}>
-          <h3 style={styles.columnTitle}>Contact</h3>
-          <p style={styles.contactItem}>📞 77998 84561</p>
-          <p style={styles.contactItem}>✉ info@rks.com</p>
-          <div style={styles.affiliationBadge}>Affiliated to State Board</div>
+        <div style={columnStyles}>
+          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
+            Contact Us
+          </h3>
+          <p style={styles.contactItem}>📞 +91 77998 84561</p>
+          <p style={styles.contactItem}>✉ info@rksnextgen.com</p>
+          <div style={{...styles.affiliationBadge, margin: isMobile ? "10px auto 0" : "5px 0 0"}}>
+            Affiliated to State Board
+          </div>
         </div>
 
       </div>
 
       <div style={styles.bottomBar}>
         <p style={styles.copy}>
-          © {currentYear} RKS Next Gen School.
+          © {currentYear} RKS Next Gen School. All Rights Reserved.
         </p>
       </div>
     </footer>
@@ -67,35 +102,35 @@ const styles = {
   footerContainer: {
     backgroundColor: colors.primary,
     color: colors.white,
-    padding: "30px 20px 15px", // Reduced from 60px
-    fontFamily: "Inter, sans-serif",
+    fontFamily: "'Inter', sans-serif",
   },
   contentGrid: {
     maxWidth: "1100px",
     margin: "auto",
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", // Slightly narrower columns
-    gap: "25px", // Reduced gap
-    paddingBottom: "25px", // Reduced from 40px
+    paddingBottom: "30px",
   },
   column: {
     display: "flex",
     flexDirection: "column",
-    gap: "8px", // Tighter gap between items
+    gap: "12px",
   },
   columnTitle: {
-    fontSize: "16px", // Smaller title
+    fontSize: "18px",
     fontWeight: "700",
-    borderLeft: `3px solid ${colors.gold}`,
-    paddingLeft: "10px",
-    color: colors.white,
-    marginBottom: "5px",
+    borderLeft: `4px solid ${colors.gold}`,
+    paddingLeft: "12px",
+    color: colors.gold,
+    marginBottom: "8px",
+    textTransform: "uppercase",
+    letterSpacing: "1px",
   },
   schoolDescription: {
-    fontSize: "13px",
+    fontSize: "14px",
     color: "rgba(255,255,255,0.7)",
-    lineHeight: 1.4, // Tighter line height
+    lineHeight: 1.6,
     margin: 0,
+    maxWidth: "300px",
   },
   linkList: {
     listStyle: "none",
@@ -103,52 +138,58 @@ const styles = {
     margin: 0,
     display: "flex",
     flexDirection: "column",
-    gap: "4px",
+    gap: "10px", // Better touch spacing
   },
   link: {
     color: "rgba(255,255,255,0.8)",
     textDecoration: "none",
-    fontSize: "13px",
+    fontSize: "14px",
+    transition: "color 0.3s ease",
   },
   contactItem: {
-    fontSize: "13px",
+    fontSize: "14px",
     color: "rgba(255,255,255,0.8)",
     margin: 0,
+    lineHeight: "1.6",
   },
   affiliationBadge: {
     border: `1px solid ${colors.gold}`,
     color: colors.gold,
-    padding: "3px 8px",
+    padding: "4px 12px",
     width: "fit-content",
-    fontSize: "10px", // Smaller badge
-    marginTop: "2px",
-    borderRadius: "3px",
+    fontSize: "11px",
+    fontWeight: "700",
+    borderRadius: "2px",
+    textTransform: "uppercase",
   },
   socialIcons: {
     display: "flex",
-    gap: "8px",
-    marginTop: "5px",
+    gap: "12px",
+    marginTop: "10px",
   },
   iconCircle: {
-    width: "28px", // Reduced size
-    height: "28px", // Reduced size
+    width: "32px",
+    height: "32px",
     borderRadius: "50%",
-    border: `1px solid ${colors.gold}`,
+    border: `1px solid rgba(255,255,255,0.3)`,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    fontSize: "11px",
+    fontSize: "12px",
+    color: colors.white,
+    transition: "all 0.3s ease",
   },
   bottomBar: {
     borderTop: "1px solid rgba(255,255,255,0.1)",
-    paddingTop: "10px",
+    padding: "20px 0",
     textAlign: "center",
   },
   copy: {
     fontSize: "12px",
-    color: "rgba(255,255,255,0.5)",
+    color: "rgba(255,255,255,0.4)",
     margin: 0,
+    letterSpacing: "0.5px",
   },
 };
 
