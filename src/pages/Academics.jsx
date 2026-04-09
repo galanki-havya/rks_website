@@ -1,70 +1,97 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 // Standardized Brand Palette
 const colors = { 
   midnight: "#001B36", 
-  premiumGold: "#B38B45", 
-  softGold: "rgba(179, 139, 69, 0.1)",
+  premiumGold: "#C5A059", // Slightly more muted "Luxury" Gold
+  softGold: "rgba(197, 160, 89, 0.1)",
   white: "#FFFFFF",
-  slate: "#64748b",
+  slate: "#475569",
   offWhite: "#F8FAFC",
-  border: "rgba(0, 27, 54, 0.08)"
+  border: "rgba(0, 27, 54, 0.08)",
+  glass: "rgba(255, 255, 255, 0.7)"
+};
+
+// --- ANIMATION VARIANTS ---
+const containerVar = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+};
+
+const itemVar = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
 };
 
 const Academics = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const levels = [
     {
       title: "Primary School",
       grades: "Grades I - V",
-      focus: "Foundational Literacy & Numeracy",
+      focus: "Foundational Literacy",
       description: "Activity-based learning designed to spark curiosity and build a strong foundation in core concepts.",
       icon: "🌱"
     },
     {
       title: "Middle School",
       grades: "Grades VI - VIII",
-      focus: "Exploration & Skill Building",
+      focus: "Exploration & Skills",
       description: "Integrated IIT/NEET foundation courses begin here, fostering critical thinking and analytical research.",
       icon: "📘"
     },
     {
       title: "High School",
       grades: "Grades IX - X",
-      focus: "Excellence & Board Readiness",
-      description: "Rigorous academic preparation combined with advanced competitive exam coaching and counseling.",
+      focus: "Excellence & Boards",
+      description: "Rigorous academic preparation combined with advanced competitive exam coaching.",
       icon: "🎓"
     },
     {
       title: "Higher Secondary",
       grades: "Grades XI - XII",
-      focus: "Specialization & Mastery",
-      description: "Stream-specific expertise (MPC/BiPC) designed to bridge the gap between school and university life.",
+      focus: "Specialization",
+      description: "Stream-specific expertise (MPC/BiPC) designed to bridge the gap between school and university.",
       icon: "🚀"
     }
   ];
 
   return (
-    <div style={styles.pageWrapper}>
+    <motion.div 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={containerVar}
+      style={styles.pageWrapper}
+    >
       {/* --- HERO HEADER --- */}
-      <section style={styles.hero}>
-        <div style={styles.container}>
+      <section style={{...styles.hero, padding: isMobile ? "120px 20px 60px" : "160px 20px 100px"}}>
+        <motion.div variants={itemVar} style={styles.container}>
           <span style={styles.accent}>CURRICULUM & PEDAGOGY</span>
-          {/* UPDATED COLOR HERE: Academic is now White */}
-          <h1 style={styles.heroTitle}>
-            <span style={{color: colors.white}}>Academic</span> <span style={{color: colors.premiumGold}}>Excellence</span>
+          <h1 style={{...styles.heroTitle, fontSize: isMobile ? "34px" : "52px"}}>
+            Academic <span style={{color: colors.premiumGold}}>Excellence</span>
           </h1>
           <p style={styles.heroSubtitle}>
             A balanced curriculum that merges innovation with discipline, 
-            preparing students for global challenges through conceptual clarity.
+            preparing students for global challenges.
           </p>
           <div style={styles.underline} />
-        </div>
+        </motion.div>
       </section>
 
       <div style={styles.container}>
-        {/* --- METHODOLOGY SECTION --- */}
-        <section style={styles.sectionMargin}>
-          <div style={styles.philosophyCard}>
+        {/* --- METHODOLOGY SECTION (GLASSMORPHISM) --- */}
+        <motion.section variants={itemVar} style={styles.sectionMargin}>
+          <div style={{...styles.philosophyCard, padding: isMobile ? "30px 20px" : "45px"}}>
             <div style={styles.flexRow}>
               <div style={styles.philText}>
                 <h3 style={styles.sectionTitle}>The RKS Methodology</h3>
@@ -72,7 +99,7 @@ const Academics = () => {
                   At RKS Next Gen, we follow an integrated curriculum that combines 
                   national standards with modern pedagogical techniques. Our 
                   <strong> "Innovation • Discipline • Success"</strong> framework ensures 
-                  that students aren't just memorizing, but truly understanding.
+                  true conceptual understanding.
                 </p>
               </div>
               <div style={styles.philStats}>
@@ -87,197 +114,147 @@ const Academics = () => {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* --- ACADEMIC LEVELS GRID --- */}
-        <div style={styles.grid}>
+        <div style={{
+          ...styles.grid, 
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: isMobile ? "15px" : "25px"
+        }}>
           {levels.map((level, index) => (
-            <div key={index} style={styles.card}>
+            <motion.div 
+              key={index} 
+              variants={itemVar}
+              whileHover={{ y: -5 }}
+              style={styles.card}
+            >
               <div style={styles.iconCircle}>{level.icon}</div>
               <h3 style={styles.cardTitle}>{level.title}</h3>
               <p style={styles.grades}>{level.grades}</p>
               <div style={styles.focusBadge}>Focus: {level.focus}</div>
               <p style={styles.cardDesc}>{level.description}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* --- KEY HIGHLIGHTS (Dark Section) --- */}
-        <section style={styles.featuresSection}>
+        {/* --- KEY HIGHLIGHTS --- */}
+        <motion.section variants={itemVar} style={{...styles.featuresSection, padding: isMobile ? "40px 20px" : "60px 50px"}}>
           <div style={styles.sectionHeader}>
-            <h3 style={styles.sectionTitleLight}>Academic Highlights</h3>
-            <p style={{color: 'rgba(255,255,255,0.6)'}}>Built for the 21st-century learner.</p>
+            <h3 style={{...styles.sectionTitleLight, fontSize: isMobile ? "26px" : "32px"}}>Academic Highlights</h3>
+            <p style={{color: 'rgba(255,255,255,0.5)', fontSize: "14px"}}>Built for the 21st-century learner.</p>
           </div>
-          <div style={styles.featureGrid}>
+          <div style={{...styles.featureGrid, gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)"}}>
             {[
               "Digitally enabled smart classrooms",
               "Personalized attention & remedial support",
-              "Olympiad & Foundation integrated coaching",
-              "Advanced Science & Computer Laboratories",
-              "Language labs for communication mastery",
-              "Comprehensive Library & Research center"
+              "Olympiad & Foundation coaching",
+              "Advanced Science & Computer Labs",
+              "Language labs for communication",
+              "Comprehensive Library center"
             ].map((feature, i) => (
               <div key={i} style={styles.featureItem}>
                 <span style={styles.check}>✓</span> {feature}
               </div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* --- HOLISTIC SECTION --- */}
         <section style={styles.holisticSection}>
-          <div style={styles.centeredHeader}>
+          <motion.div variants={itemVar} style={styles.centeredHeader}>
             <h3 style={styles.sectionTitle}>Beyond the Classroom</h3>
-            <p style={styles.textCenter}>
-              We empower students to explore their passions through professional coaching and leadership programs.
-            </p>
-          </div>
-          <div style={styles.holisticGrid}>
-            <div style={styles.holisticItem}>
-              <h4 style={styles.hTitle}>🏆 Sports & Athletics</h4>
-              <p style={styles.hDesc}>Professional training in basketball, football, and swimming to foster teamwork.</p>
-            </div>
-            <div style={styles.holisticItem}>
-              <h4 style={styles.hTitle}>🎨 Arts & Culture</h4>
-              <p style={styles.hDesc}>Dedicated studios for music, dance, and visual arts to encourage creativity.</p>
-            </div>
-            <div style={styles.holisticItem}>
-              <h4 style={styles.hTitle}>📢 Leadership</h4>
-              <p style={styles.hDesc}>Student Council and Debate Clubs to build public speaking and confidence.</p>
-            </div>
+            <p style={styles.textCenter}>Empowering passions through professional coaching.</p>
+          </motion.div>
+          <div style={{...styles.holisticGrid, gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)"}}>
+            {[
+              { t: "Sports", d: "Professional training in basketball and football.", i: "🏆" },
+              { t: "Arts", d: "Dedicated studios for music and visual arts.", i: "🎨" },
+              { t: "Leadership", d: "Student Council and public speaking clubs.", i: "📢" }
+            ].map((item, idx) => (
+              <motion.div 
+                key={idx} 
+                variants={itemVar}
+                whileHover={{ y: -5 }}
+                style={styles.holisticItem}
+              >
+                <h4 style={styles.hTitle}>{item.i} {item.t}</h4>
+                <p style={styles.hDesc}>{item.d}</p>
+              </motion.div>
+            ))}
           </div>
         </section>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 const styles = {
-  pageWrapper: {
-    backgroundColor: colors.white,
-    minHeight: "100vh",
-    paddingBottom: "80px",
-  },
-  hero: {
-    backgroundColor: colors.midnight,
-    color: colors.white,
-    padding: "160px 20px 100px",
-    textAlign: "center",
-  },
-  accent: { 
-    color: colors.premiumGold, 
-    letterSpacing: '3px', 
-    fontSize: '11px', 
-    fontWeight: '700', 
-    marginBottom: '10px', 
-    display: 'block' 
-  },
-  heroTitle: {
-    fontSize: "clamp(32px, 5vw, 48px)",
-    fontWeight: "800",
-    margin: "0 0 20px 0",
-  },
-  heroSubtitle: {
-    fontSize: "18px",
-    maxWidth: "700px",
-    margin: "auto",
-    color: "rgba(255,255,255,0.7)",
-    lineHeight: "1.6"
-  },
-  underline: { width: '50px', height: '3px', background: colors.premiumGold, margin: '25px auto 0' },
-  container: {
-    maxWidth: "1100px",
-    margin: "0 auto",
-    padding: "0 25px",
-  },
-  sectionMargin: { marginTop: "-50px", marginBottom: "60px" },
+  pageWrapper: { backgroundColor: "#FFFFFF", minHeight: "100vh", paddingBottom: "60px" },
+  hero: { backgroundColor: colors.midnight, color: colors.white, textAlign: "center" },
+  accent: { color: colors.premiumGold, letterSpacing: '4px', fontSize: '12px', fontWeight: '800', marginBottom: '10px', display: 'block' },
+  heroTitle: { fontWeight: "900", margin: "0 0 15px 0", letterSpacing: "-1px" },
+  heroSubtitle: { fontSize: "17px", maxWidth: "600px", margin: "auto", color: "rgba(255,255,255,0.6)", lineHeight: "1.6" },
+  underline: { width: '40px', height: '4px', background: colors.premiumGold, margin: '20px auto 0' },
+  container: { maxWidth: "1140px", margin: "0 auto", padding: "0 20px" },
+  sectionMargin: { marginTop: "-40px", marginBottom: "50px" },
   philosophyCard: {
-    backgroundColor: colors.white,
-    padding: "45px",
-    borderRadius: "20px",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.05)",
+    background: "rgba(255, 255, 255, 0.9)",
+    backdropFilter: "blur(10px)",
+    borderRadius: "24px",
     border: `1px solid ${colors.border}`,
+    boxShadow: "0 15px 35px rgba(0,27,54,0.08)",
   },
-  flexRow: { display: 'flex', flexWrap: 'wrap', gap: '30px', alignItems: 'center' },
-  philText: { flex: '2', minWidth: '300px' },
-  philStats: { 
-    flex: '1', 
-    display: 'flex', 
-    gap: '15px', 
-    minWidth: '200px',
-    justifyContent: 'center'
-  },
-  miniStat: {
-    textAlign: 'center',
-    padding: '20px',
-    background: colors.offWhite,
-    borderRadius: '15px',
-    flex: 1
-  },
-  statVal: { display: 'block', fontSize: '24px', fontWeight: '800', color: colors.midnight },
-  statLab: { fontSize: '12px', color: colors.premiumGold, fontWeight: '700', textTransform: 'uppercase' },
-  sectionTitle: { color: colors.midnight, fontSize: "28px", fontWeight: '800', marginBottom: "15px" },
+  flexRow: { display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center' },
+  philText: { flex: '2', minWidth: '280px' },
+  philStats: { flex: '1', display: 'flex', gap: '12px', minWidth: '200px' },
+  miniStat: { textAlign: 'center', padding: '15px', background: colors.offWhite, borderRadius: '16px', flex: 1 },
+  statVal: { display: 'block', fontSize: '22px', fontWeight: '900', color: colors.midnight },
+  statLab: { fontSize: '11px', color: colors.premiumGold, fontWeight: '800', textTransform: 'uppercase' },
+  sectionTitle: { color: colors.midnight, fontSize: "30px", fontWeight: '900', marginBottom: "15px" },
   text: { color: colors.slate, lineHeight: "1.7", fontSize: "16px" },
-  
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-    gap: "25px",
-    marginBottom: "80px",
-  },
+  grid: { display: "grid", marginBottom: "60px" },
   card: {
-    backgroundColor: colors.offWhite,
-    padding: "40px 30px",
-    borderRadius: "20px",
+    background: colors.glass,
+    backdropFilter: "blur(8px)",
+    padding: "35px 25px",
+    borderRadius: "24px",
     border: `1px solid ${colors.border}`,
-    transition: '0.3s'
+    boxShadow: "0 8px 20px rgba(0,0,0,0.02)",
   },
   iconCircle: {
-    width: '60px', height: '60px', background: colors.white, borderRadius: '15px',
+    width: '55px', height: '55px', background: colors.white, borderRadius: '16px',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: '30px', marginBottom: '20px', boxShadow: '0 8px 15px rgba(0,0,0,0.03)'
+    fontSize: '28px', marginBottom: '15px', boxShadow: '0 5px 15px rgba(0,0,0,0.05)'
   },
-  cardTitle: { color: colors.midnight, fontSize: '20px', fontWeight: '800', marginBottom: "8px" },
-  grades: { color: colors.premiumGold, fontWeight: "700", fontSize: "13px", marginBottom: "15px", textTransform: 'uppercase' },
-  focusBadge: { 
-    display: 'inline-block', padding: '5px 12px', background: colors.softGold, 
-    color: colors.premiumGold, borderRadius: '6px', fontSize: '12px', fontWeight: '700', marginBottom: '15px' 
-  },
+  cardTitle: { color: colors.midnight, fontSize: '19px', fontWeight: '900', marginBottom: "6px" },
+  grades: { color: colors.premiumGold, fontWeight: "800", fontSize: "12px", marginBottom: "12px", textTransform: 'uppercase', letterSpacing: '1px' },
+  focusBadge: { display: 'inline-block', padding: '4px 10px', background: colors.softGold, color: colors.premiumGold, borderRadius: '6px', fontSize: '11px', fontWeight: '800', marginBottom: '15px' },
   cardDesc: { color: colors.slate, fontSize: "14px", lineHeight: "1.6" },
-
   featuresSection: {
     backgroundColor: colors.midnight,
     color: colors.white,
-    padding: "60px 50px",
-    borderRadius: "25px",
-    marginBottom: "80px",
+    borderRadius: "32px",
+    marginBottom: "60px",
+    boxShadow: "0 20px 40px rgba(0,27,54,0.2)"
   },
-  sectionHeader: { textAlign: 'center', marginBottom: '40px' },
-  sectionTitleLight: { color: colors.white, fontSize: "30px", fontWeight: '800', marginBottom: "10px" },
-  featureGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "20px",
-  },
-  featureItem: { fontSize: "15px", display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.8)' },
+  sectionHeader: { textAlign: 'center', marginBottom: '35px' },
+  sectionTitleLight: { fontWeight: '900', marginBottom: '5px' },
+  featureGrid: { display: "grid", gap: "15px" },
+  featureItem: { fontSize: "14px", display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.8)' },
   check: { color: colors.premiumGold, marginRight: '10px', fontWeight: 'bold' },
-
-  holisticSection: { marginBottom: "80px" },
-  centeredHeader: { textAlign: 'center', marginBottom: '40px' },
-  textCenter: { color: colors.slate, fontSize: "17px", maxWidth: "600px", margin: "0 auto" },
-  holisticGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "25px",
-  },
+  holisticSection: { marginBottom: "60px" },
+  centeredHeader: { textAlign: 'center', marginBottom: '35px' },
+  textCenter: { color: colors.slate, fontSize: "16px", maxWidth: "500px", margin: "0 auto" },
+  holisticGrid: { display: "grid", gap: "20px" },
   holisticItem: {
-    padding: "30px",
+    padding: "25px",
     borderRadius: "20px",
-    backgroundColor: colors.white,
+    background: colors.white,
     border: `1px solid ${colors.border}`,
-    boxShadow: '0 10px 25px rgba(0,0,0,0.02)'
+    boxShadow: '0 10px 25px rgba(0,0,0,0.03)'
   },
-  hTitle: { color: colors.midnight, marginBottom: '12px', fontWeight: '800' },
+  hTitle: { color: colors.midnight, marginBottom: '8px', fontWeight: '900', fontSize: '18px' },
   hDesc: { color: colors.slate, fontSize: '14px', lineHeight: '1.6' }
 };
 

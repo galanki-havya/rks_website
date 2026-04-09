@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const colors = {
   primary: "#002147",
   gold: "#C9A227",
   white: "#FFFFFF",
+  muted: "rgba(255, 255, 255, 0.6)",
+  border: "rgba(255, 255, 255, 0.1)",
 };
 
 function Footer() {
@@ -17,180 +20,181 @@ function Footer() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const footerStyles = {
-    ...styles.footerContainer,
-    padding: isMobile ? "40px 20px 20px" : "30px 20px 15px",
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.1, 
+        delayChildren: 0.2 
+      }
+    }
   };
 
-  const gridStyles = {
-    ...styles.contentGrid,
-    gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(180px, 1fr))",
-    textAlign: isMobile ? "center" : "left",
-    gap: isMobile ? "35px" : "25px",
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.5, ease: "easeOut" } 
+    }
   };
 
-  const columnStyles = {
-    ...styles.column,
-    alignItems: isMobile ? "center" : "flex-start",
-  };
+  const contactNumbers = ["+91 77998 84561", "+91 77998 84562", "+91 77998 84563", "+91 77998 84564"];
 
   return (
-    <footer style={footerStyles}>
-      <div style={gridStyles}>
-
-        {/* Column 1: Brand & Socials */}
-        <div style={columnStyles}>
-          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
-            RKS Next Gen
-          </h3>
-          <p style={styles.schoolDescription}>
-            Nurturing discipline and innovation through educational excellence since 2011.
-          </p>
-          <div style={styles.socialIcons}>
-            <span style={styles.iconCircle}>f</span>
-            <span style={styles.iconCircle}>ig</span>
-            <span style={styles.iconCircle}>yt</span>
-          </div>
-        </div>
-
-        {/* Column 2: Quick Links */}
-        <div style={columnStyles}>
-          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
-            Quick Links
-          </h3>
-          <ul style={{...styles.linkList, alignItems: isMobile ? "center" : "flex-start"}}>
-            <li><Link to="/" style={styles.link}>Home</Link></li>
-            <li><Link to="/about" style={styles.link}>About Us</Link></li>
-            <li><Link to="/academics" style={styles.link}>Academics</Link></li>
-            <li><Link to="/contact" style={styles.link}>Admissions</Link></li>
-          </ul>
-        </div>
-
-        {/* Column 3: Locations */}
-        <div style={columnStyles}>
-          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
-            Our Campuses
-          </h3>
-          <p style={styles.contactItem}><b>Vinayaka:</b> A. Rangampeta, Tirupati</p>
-          <p style={styles.contactItem}><b>Veeksha:</b> Bairagipatteda, Tirupati</p>
-        </div>
-
-        {/* Column 4: Contact */}
-        <div style={columnStyles}>
-          <h3 style={{...styles.columnTitle, borderLeft: isMobile ? "none" : styles.columnTitle.borderLeft}}>
-            Contact Us
-          </h3>
-          <p style={styles.contactItem}>📞 +91 77998 84561</p>
-          <p style={styles.contactItem}>✉ info@rksnextgen.com</p>
-          <div style={{...styles.affiliationBadge, margin: isMobile ? "10px auto 0" : "5px 0 0"}}>
-            Affiliated to State Board
-          </div>
-        </div>
-
+    <footer style={styles.footerWrapper}>
+      <div style={styles.shapeDivider}>
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style={styles.svg}>
+          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#FFFFFF"></path>
+        </svg>
       </div>
 
-      <div style={styles.bottomBar}>
-        <p style={styles.copy}>
-          © {currentYear} RKS Next Gen School. All Rights Reserved.
-        </p>
-      </div>
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.3 }}
+        style={{...styles.footerContent, padding: isMobile ? "20px 20px" : "40px 20px 20px"}}
+      >
+        <div style={{
+          ...styles.grid, 
+          gridTemplateColumns: isMobile ? "1fr" : "1.2fr 0.8fr 1fr 1.5fr",
+          textAlign: isMobile ? "center" : "left"
+        }}>
+
+          {/* Column 1: Brand */}
+          <motion.div variants={itemVariants} style={styles.column}>
+            <h2 style={styles.brandTitle}>RKS NEXT GEN</h2>
+            <p style={styles.description}>Redefining educational excellence since 2011.</p>
+           
+          </motion.div>
+
+          {/* Column 2: Quick Links */}
+          <motion.div variants={itemVariants} style={styles.column}>
+            <h3 style={styles.columnHeading}>Explore</h3>
+            <div style={styles.linkList}>
+              {['Home', 'About', 'Academics', 'Admissions'].map((link) => (
+                <Link key={link} to={`/${link.toLowerCase()}`} style={styles.link}>
+                  <motion.span 
+                    style={{ display: "inline-block" }}
+                    whileHover={{ x: 5, color: colors.gold }}
+                  >
+                    {link}
+                  </motion.span>
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Column 3: Locations with Proper Links */}
+          <motion.div variants={itemVariants} style={styles.column}>
+            <h3 style={styles.columnHeading}>Campuses</h3>
+            
+            <motion.a 
+              href="https://maps.app.goo.gl/35n6uLwLtMqLJsZU7" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={styles.locationLink}
+              whileHover={{ x: 5 }}
+            >
+              <div style={styles.campusItem}>
+                <p style={styles.campusName}>RK NextGen Campus</p>
+                <p style={styles.campusAddr}>A. Rangampeta, Tirupati</p>
+              </div>
+            </motion.a>
+
+            <motion.a 
+              href="https://maps.app.goo.gl/QUWafe2zz48TCRvt5" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={styles.locationLink}
+              whileHover={{ x: 5 }}
+            >
+              <div style={styles.campusItem}>
+                <p style={styles.campusName}>Veeksha Campus</p>
+                <p style={styles.campusAddr}>Near Bairagipatteda Arch, Tirupati</p>
+              </div>
+            </motion.a>
+          </motion.div>
+
+          {/* Column 4: Contact */}
+          <motion.div variants={itemVariants} style={styles.column}>
+            <h3 style={styles.columnHeading}>Contact Us</h3>
+            <div style={{
+              ...styles.numberGrid,
+              gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
+              justifyItems: isMobile ? "center" : "start"
+            }}>
+              {contactNumbers.map((num, index) => (
+                <motion.a 
+                  key={index} 
+                  href={`tel:${num.replace(/\s+/g, '')}`} 
+                  style={styles.contactLink}
+                  whileHover={{ scale: 1.02, color: colors.gold }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <span style={styles.contactIcon}>📞</span> {num}
+                </motion.a>
+              ))}
+            </div>
+            <motion.a 
+              href="mailto:admin@nextgenedap.com" 
+              style={{
+                ...styles.mailLink,
+                justifyContent: isMobile ? "center" : "flex-start"
+              }}
+              whileHover={{ scale: 1.02, color: colors.gold }}
+            >
+              <span style={styles.contactIcon}>✉</span> admin@nextgenedap.com
+            </motion.a>
+          </motion.div>
+        </div>
+
+        {/* Bottom Bar */}
+        <motion.div variants={itemVariants} style={styles.bottomBar}>
+          <div style={{...styles.bottomContainer, flexDirection: isMobile ? "column" : "row"}}>
+            <p style={styles.copyright}>© {currentYear} RKS Next Gen School. All Rights Reserved.</p>
+            <motion.div 
+              style={{...styles.badge, marginTop: isMobile ? "15px" : "0"}}
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ repeat: Infinity, duration: 3 }}
+            >
+              STATE BOARD AFFILIATED
+            </motion.div>
+          </div>
+        </motion.div>
+      </motion.div>
     </footer>
   );
 }
 
 const styles = {
-  footerContainer: {
-    backgroundColor: colors.primary,
-    color: colors.white,
-    fontFamily: "'Inter', sans-serif",
-  },
-  contentGrid: {
-    maxWidth: "1100px",
-    margin: "auto",
-    display: "grid",
-    paddingBottom: "30px",
-  },
-  column: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px",
-  },
-  columnTitle: {
-    fontSize: "18px",
-    fontWeight: "700",
-    borderLeft: `4px solid ${colors.gold}`,
-    paddingLeft: "12px",
-    color: colors.gold,
-    marginBottom: "8px",
-    textTransform: "uppercase",
-    letterSpacing: "1px",
-  },
-  schoolDescription: {
-    fontSize: "14px",
-    color: "rgba(255,255,255,0.7)",
-    lineHeight: 1.6,
-    margin: 0,
-    maxWidth: "300px",
-  },
-  linkList: {
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px", // Better touch spacing
-  },
-  link: {
-    color: "rgba(255,255,255,0.8)",
-    textDecoration: "none",
-    fontSize: "14px",
-    transition: "color 0.3s ease",
-  },
-  contactItem: {
-    fontSize: "14px",
-    color: "rgba(255,255,255,0.8)",
-    margin: 0,
-    lineHeight: "1.6",
-  },
-  affiliationBadge: {
-    border: `1px solid ${colors.gold}`,
-    color: colors.gold,
-    padding: "4px 12px",
-    width: "fit-content",
-    fontSize: "11px",
-    fontWeight: "700",
-    borderRadius: "2px",
-    textTransform: "uppercase",
-  },
-  socialIcons: {
-    display: "flex",
-    gap: "12px",
-    marginTop: "10px",
-  },
-  iconCircle: {
-    width: "32px",
-    height: "32px",
-    borderRadius: "50%",
-    border: `1px solid rgba(255,255,255,0.3)`,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    fontSize: "12px",
-    color: colors.white,
-    transition: "all 0.3s ease",
-  },
-  bottomBar: {
-    borderTop: "1px solid rgba(255,255,255,0.1)",
-    padding: "20px 0",
-    textAlign: "center",
-  },
-  copy: {
-    fontSize: "12px",
-    color: "rgba(255,255,255,0.4)",
-    margin: 0,
-    letterSpacing: "0.5px",
-  },
+  footerWrapper: { backgroundColor: colors.primary, position: "relative", width: "100%", overflow: "hidden" },
+  shapeDivider: { width: "100%", lineHeight: 0 },
+  svg: { display: "block", width: "100%", height: "40px" },
+  footerContent: { maxWidth: "1200px", margin: "0 auto" },
+  grid: { display: "grid", gap: "30px", paddingBottom: "30px" },
+  column: { display: "flex", flexDirection: "column" },
+  brandTitle: { color: colors.gold, fontSize: "20px", fontWeight: "900", margin: "0 0 10px 0", letterSpacing: "1px" },
+  description: { fontSize: "13px", color: colors.muted, lineHeight: "1.6", margin: "0 0 20px 0", maxWidth: "260px" },
+  columnHeading: { color: colors.white, fontSize: "13px", fontWeight: "700", textTransform: "uppercase", marginBottom: "15px", letterSpacing: "1px" },
+  linkList: { display: "flex", flexDirection: "column", gap: "8px" },
+  link: { color: colors.muted, textDecoration: "none", fontSize: "13px", transition: "color 0.3s ease" },
+  locationLink: { textDecoration: "none", display: "block" },
+  campusItem: { marginBottom: "15px", cursor: "pointer" },
+  campusName: { color: colors.gold, fontSize: "13px", fontWeight: "700", margin: 0 },
+  campusAddr: { color: colors.muted, fontSize: "12px", margin: "2px 0 0 0" },
+  numberGrid: { display: "grid", gap: "10px 20px", width: "100%" },
+  contactLink: { color: colors.white, textDecoration: "none", fontSize: "12px", fontWeight: "600", display: "flex", alignItems: "center", gap: "8px", whiteSpace: "nowrap" },
+  mailLink: { color: colors.white, textDecoration: "none", fontSize: "12px", fontWeight: "600", display: "flex", alignItems: "center", gap: "8px", marginTop: "15px" },
+  contactIcon: { color: colors.gold, fontSize: "12px" },
+  badge: { border: `1px solid ${colors.gold}88`, color: colors.gold, fontSize: "9px", fontWeight: "800", padding: "4px 10px", borderRadius: "4px" },
+  socialRow: { display: "flex", gap: "10px" },
+  socialCircle: { width: "30px", height: "30px", borderRadius: "50%", border: `1px solid ${colors.border}`, display: "flex", alignItems: "center", justifyContent: "center", color: colors.white, fontSize: "12px", cursor: "pointer", transition: "all 0.3s ease" },
+  bottomBar: { borderTop: `1px solid ${colors.border}`, paddingTop: "20px", marginTop: "10px" },
+  bottomContainer: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  copyright: { fontSize: "11px", color: "rgba(255,255,255,0.4)", margin: 0 },
 };
 
 export default Footer;

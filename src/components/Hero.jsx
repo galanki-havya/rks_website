@@ -1,77 +1,146 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate
 import GallerySlider from "../components/GallerySlider";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.3 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.7, ease: [0.215, 0.61, 0.355, 1] } 
+  },
+};
+
 const Hero = () => {
-  const [show, setShow] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate(); // 2. Initialize navigate function
 
   useEffect(() => {
-    document.body.style.margin = "0";
-    const timer = setTimeout(() => setShow(true), 300);
-    return () => clearTimeout(timer);
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <div style={styles.container}>
-      {/* 1. BACKGROUND SLIDER LAYER */}
       <div style={styles.bgWrapper}>
         <GallerySlider />
-        <div style={styles.premiumOverlay}></div>
+        <div style={{
+          ...styles.premiumOverlay,
+          background: isMobile 
+            ? "linear-gradient(to top, rgba(0, 27, 54, 1) 0%, rgba(0, 27, 54, 0.6) 40%, rgba(0, 27, 54, 0.2) 100%)" 
+            : "linear-gradient(to right, rgba(0, 27, 54, 0.95) 0%, rgba(0, 27, 54, 0.4) 50%, transparent 100%)"
+        }}></div>
       </div>
 
-      {/* 2. LEFT CONTENT PANEL */}
-      <div
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
         style={{
           ...styles.content,
-          opacity: show ? 1 : 0,
-          transform: show ? "translateX(0)" : "translateX(-50px)",
+          padding: isMobile ? "0 20px 100px 20px" : "0 8%",
+          justifyContent: isMobile ? "flex-end" : "center",
+          alignItems: isMobile ? "center" : "flex-start",
+          textAlign: isMobile ? "center" : "left",
         }}
       >
-        <p style={styles.topLine}>BUILDING A FOUNDATION FOR EXCELLENCE</p>
+        <motion.p variants={itemVariants} style={{
+          ...styles.topLine,
+          fontSize: isMobile ? "11px" : "13px",
+        }}>
+          BUILDING A FOUNDATION FOR EXCELLENCE
+        </motion.p>
 
-        <h1 style={styles.title}>
+        <motion.h1 variants={itemVariants} style={{
+          ...styles.title,
+          fontSize: isMobile ? "38px" : "clamp(45px, 5.5vw, 68px)", 
+        }}>
           <span style={{ color: "#fff" }}>Empowering</span> 
           <br /> 
           <span style={{ color: "#C5A059" }}>Future Leaders</span>
-        </h1>
+        </motion.h1>
 
-        <div style={styles.goldLine}></div>
+        <motion.div 
+          initial={{ width: 0 }}
+          animate={{ width: isMobile ? "40px" : "80px" }}
+          transition={{ delay: 0.7, duration: 0.8 }}
+          style={{...styles.goldLine, margin: isMobile ? "15px auto" : "25px 0"}} 
+        />
 
-        <p style={styles.subtitle}>
-          Empowering students with innovation, knowledge, and strong values to
-          shape future leaders in a dynamic world.
-        </p>
+        <motion.p variants={itemVariants} style={{
+          ...styles.subtitle,
+          fontSize: isMobile ? "15px" : "18px",
+          maxWidth: isMobile ? "100%" : "520px",
+        }}>
+          Nurturing students with innovation, knowledge, and values to 
+          become the visionary leaders of tomorrow.
+        </motion.p>
 
-        <div style={styles.quoteWrapper}>
-          <div style={styles.quoteVerticalLine}></div>
-          <p style={styles.quoteText}>
-            "Arise, awake, and stop not until the goal is reached."
-          </p>
-        </div>
-
-        <div style={styles.buttons}>
-          <button 
-            style={styles.primaryBtn}
-            onMouseOver={(e) => e.target.style.background = "#D4AF37"}
-            onMouseOut={(e) => e.target.style.background = "#C5A059"}
+        <motion.div variants={itemVariants} style={{
+          ...styles.buttons,
+          flexDirection: isMobile ? "column" : "row",
+          width: isMobile ? "100%" : "auto",
+          gap: isMobile ? "12px" : "15px"
+        }}>
+          {/* 3. Redirect to Admissions */}
+          <motion.button 
+            onClick={() => navigate("/admissions")} 
+            whileHover={{ scale: 1.02, backgroundColor: "#D4AF37" }}
+            whileTap={{ scale: 0.98 }}
+            style={{...styles.primaryBtn, width: isMobile ? "100%" : "auto"}}
           >
             Admissions 2026-27
-          </button>
-          <button 
-            style={styles.secondaryBtn}
-            onMouseOver={(e) => e.target.style.background = "rgba(255,255,255,0.1)"}
-            onMouseOut={(e) => e.target.style.background = "transparent"}
+          </motion.button>
+          
+          {/* 4. Redirect to About */}
+          <motion.button 
+            onClick={() => navigate("/about")}
+            whileHover={{ scale: 1.02, backgroundColor: "rgba(255,255,255,0.12)" }}
+            whileTap={{ scale: 0.98 }}
+            style={{...styles.secondaryBtn, width: isMobile ? "100%" : "auto"}}
           >
             Learn More
-          </button>
-        </div>
-      </div>
+          </motion.button>
+        </motion.div>
+      </motion.div>
 
-      <style>{`
-        button { transition: all 0.3s ease-in-out !important; }
-      `}</style>
+      <motion.div 
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
+        style={{
+          ...styles.quoteWrapper,
+          bottom: isMobile ? "25px" : "50px",
+          left: isMobile ? "20px" : "auto",
+          right: isMobile ? "20px" : "8%",
+          maxWidth: isMobile ? "none" : "320px",
+          textAlign: isMobile ? "center" : "left",
+          background: isMobile ? "rgba(255,255,255,0.05)" : "transparent",
+          padding: isMobile ? "12px 20px" : "0 0 0 20px",
+          backdropFilter: isMobile ? "blur(8px)" : "none",
+          borderRadius: isMobile ? "4px" : "0",
+          borderLeft: isMobile ? "none" : "3px solid #C5A059",
+          borderTop: isMobile ? "1px solid rgba(255,255,255,0.1)" : "none",
+        }}
+      >
+
+      </motion.div>
     </div>
   );
 };
+
+// ... Styles remain the same
 
 const styles = {
   container: {
@@ -79,8 +148,8 @@ const styles = {
     height: "100vh",
     position: "relative",
     overflow: "hidden",
-    backgroundColor: "#001F3F", 
-    fontFamily: "'Inter', 'Segoe UI', sans-serif",
+    backgroundColor: "#001B36", 
+    fontFamily: "'Inter', sans-serif",
   },
   bgWrapper: {
     position: "absolute",
@@ -90,8 +159,7 @@ const styles = {
   premiumOverlay: {
     position: "absolute",
     inset: 0,
-    // Darker on the far left to ensure the text is razor-sharp against images
-    background: "linear-gradient(to right, rgba(0, 31, 63, 1) 0%, rgba(0, 31, 63, 0.8) 30%, rgba(0, 31, 63, 0.4) 60%, rgba(0, 0, 0, 0.1) 100%)",
+    zIndex: 2,
   },
   content: {
     position: "relative",
@@ -99,94 +167,81 @@ const styles = {
     height: "100%",
     display: "flex",
     flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "flex-start", // Force all children to the left
-    paddingLeft: "6%",         // Standard professional margin
-    maxWidth: "800px", 
     color: "#fff",
-    transition: "all 1.2s cubic-bezier(0.19, 1, 0.22, 1)",
-    textAlign: "left",         // Explicit text alignment
   },
   topLine: {
     color: "#C5A059",
     letterSpacing: "4px",
-    fontSize: "12px",
-    marginBottom: "10px",
-    fontWeight: "700",
+    marginBottom: "8px",
+    fontWeight: "800",
     textTransform: "uppercase",
-    marginRight: "auto",      // Pushes to left
   },
   title: {
-    fontSize: "clamp(42px, 6vw, 72px)",
     fontWeight: "900",
-    lineHeight: "1.05",
+    lineHeight: "1.1",
     margin: 0,
-    textAlign: "left",
+    letterSpacing: "-1px",
+    textTransform: "uppercase",
   },
   goldLine: {
-    width: "70px",
-    height: "5px",
+    height: "4px",
     background: "#C5A059",
-    margin: "25px 0",
     borderRadius: "2px",
   },
   subtitle: {
-    fontSize: "20px",
     lineHeight: "1.6",
     color: "rgba(255,255,255,0.9)",
-    maxWidth: "550px",
     fontWeight: "400",
-    margin: "0 0 20px 0",     // Bottom margin only to keep left align
-    textAlign: "left",
+    margin: "0 0 35px 0",
   },
   quoteWrapper: {
-    display: "flex",
-    alignItems: "center",
-    gap: "15px",
-    marginTop: "10px",
-    justifyContent: "flex-start",
-  },
-  quoteVerticalLine: {
-    width: "3px",
-    height: "30px",
-    background: "#C5A059",
+    position: "absolute",
+    zIndex: 20,
   },
   quoteText: {
     fontStyle: "italic",
-    fontSize: "15px",
-    color: "rgba(255,255,255,0.6)",
+    color: "rgba(255,255,255,0.8)",
     margin: 0,
-    textAlign: "left",
+    lineHeight: "1.5",
   },
-  buttons: {
-    marginTop: "40px",
-    display: "flex",
-    gap: "20px",
-    justifyContent: "flex-start",
-  },
-  primaryBtn: {
-    padding: "16px 35px",
-    background: "#C5A059",
-    color: "#001F3F",
-    border: "none",
-    fontWeight: "800",
-    textTransform: "uppercase",
-    fontSize: "13px",
-    letterSpacing: "1px",
-    cursor: "pointer",
-    borderRadius: "4px",
-  },
-  secondaryBtn: {
-    padding: "16px 35px",
-    border: "2px solid rgba(255,255,255,0.3)",
-    background: "transparent",
-    color: "#fff",
+  author: {
+    display: "block",
+    marginTop: "4px",
+    fontSize: "11px",
     fontWeight: "700",
     textTransform: "uppercase",
-    fontSize: "13px",
+    letterSpacing: "1px",
+    color: "#C5A059",
+  },
+  buttons: {
+    display: "flex",
+  },
+  primaryBtn: {
+    padding: "16px 32px",
+    background: "#C5A059",
+    color: "#001B36",
+    border: "none",
+    fontWeight: "900",
+    textTransform: "uppercase",
+    fontSize: "12px",
     letterSpacing: "1px",
     cursor: "pointer",
     borderRadius: "4px",
+    transition: "0.3s all",
+  },
+  secondaryBtn: {
+    padding: "16px 32px",
+    border: "1px solid rgba(255,255,255,0.4)",
+    background: "rgba(255,255,255,0.05)",
+    backdropFilter: "blur(10px)",
+    color: "#fff",
+    fontWeight: "800",
+    textTransform: "uppercase",
+    fontSize: "12px",
+    letterSpacing: "1px",
+    cursor: "pointer",
+    borderRadius: "4px",
+    transition: "0.3s all",
   }
 };
 

@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import Hero from "../components/Hero";
 import CampusSection from "../components/CampusSection";
-import rks from "../assets/rks.png";
-
 
 // --- ASSETS ---
+import rks from "../assets/rks.png";
 import chairmanImg from "../assets/chairman.png"; 
 import adminImg from "../assets/admin.png"; 
 
 const colors = {
   midnight: "#001B36",
   premiumGold: "#B38B45",
-  softGold: "rgba(179, 139, 69, 0.1)",
-  white: "#FFFFFF",
-  slate: "#64748b",
-  textMain: "#1e293b",
-  border: "rgba(0, 27, 54, 0.08)",
+  goldGradient: "linear-gradient(135deg, #B38B45 0%, #FFD700 100%)",
+  slate: "#475569", // Darker slate for better contrast
+  bgLight: "#F8FAFC", // Soft professional off-white
+  glassWhite: "rgba(255, 255, 255, 0.85)",
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
 function Home() {
@@ -24,170 +33,153 @@ function Home() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const sectionPadding = isMobile ? "50px 15px" : "90px 0";
+
+  const PhilosophyImage = ({ mobileMode = false }) => (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }} 
+      whileInView={{ opacity: 1, scale: 1 }} 
+      viewport={{ once: true }}
+      style={{ position: "relative", width: "100%", margin: mobileMode ? "25px 0" : "0" }}
+    >
+      <div style={{ 
+        ...styles.mainFrame, 
+        backgroundImage: `url(${rks})`, 
+        height: isMobile ? "260px" : "440px",
+        boxShadow: isMobile ? "0 15px 30px rgba(0,0,0,0.15)" : styles.mainFrame.boxShadow
+      }}>
+      </div>
+      {!mobileMode && (
+        <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4 }} 
+          style={{ ...styles.badgeFloating, left: "20px" }}>
+          <span style={{ fontSize: "22px", fontWeight: "900", color: colors.premiumGold }}>13+</span>
+          <span style={{ fontSize: "10px", fontWeight: "700" }}>YEARS</span>
+        </motion.div>
+      )}
+    </motion.div>
+  );
 
   return (
     <div style={styles.pageWrapper}>
+      {/* Background Pattern Overlay */}
+      <div style={styles.bgPattern} />
+
       <Hero />
 
-      {/* --- FLOATING STATS BAR --- */}
-      <div style={styles.statsOverlap}>
-        <div style={{ ...styles.statsGrid, ...(isMobile ? styles.statsGridMobile : {}) }}>
-          {[
-            { n: "13+", l: "Years of Academic Legacy" },
-            { n: "IIT/NEET", l: "Elite Foundation Programs" },
-            { n: "CBSE", l: "Integrated Global Curriculum" }
-          ].map((stat, i) => (
+      {/* --- STATS BAR --- */}
+      <section style={{ marginTop: isMobile ? "-35px" : "-55px", position: "relative", zIndex: 10, padding: "0 20px" }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          style={{ ...styles.statsGrid, flexDirection: isMobile ? "column" : "row" }}>
+          {[{ n: "13+", l: "Years of Legacy" }, { n: "IIT/NEET", l: "Elite Foundations" }, { n: "CBSE", l: "Global Standards" }].map((stat, i) => (
             <React.Fragment key={i}>
-              <div style={styles.statBox}>
-                <span style={styles.statNum}>{stat.n}</span>
+              <div style={{ flex: 1, textAlign: "center", padding: isMobile ? "10px 0" : "0" }}>
+                <span style={{ ...styles.statNum, fontSize: isMobile ? "22px" : "28px" }}>{stat.n}</span>
                 <span style={styles.statLabel}>{stat.l}</span>
               </div>
               {i < 2 && !isMobile && <div style={styles.statDivider} />}
             </React.Fragment>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </section>
 
-      {/* --- LEADERSHIP SECTION --- */}
-      <section style={styles.topSection}>
+      {/* --- LEADERSHIP --- */}
+      <section style={{ padding: sectionPadding, position: "relative" }}>
         <div style={styles.container}>
-          <div style={styles.centeredHeader}>
-            <span style={styles.preTitle}>OUR VISIONARIES</span>
-            <h2 style={styles.h2}>Pillars of <span style={styles.goldText}>Excellence</span></h2>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} style={styles.centeredHeader}>
+            <span style={styles.preTitle}>THE VISIONARIES</span>
+            <h2 style={{ ...styles.h2, fontSize: isMobile ? "28px" : "42px" }}>Pillars of <span style={styles.goldText}>Excellence</span></h2>
             <div style={styles.titleUnderline} />
-          </div>
-
-          <div style={{ ...styles.mentorGrid, ...(isMobile ? styles.flexColumn : {}) }}>
-            {/* Chairman Card */}
-            <div style={styles.mentorCard}>
-              <div style={styles.avatarWrapper}>
-                <div style={styles.photoCircle}>
-                  <img src={chairmanImg} alt="Chairman" style={styles.mentorImage} />
+          </motion.div>
+          
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
+            style={{ ...styles.mentorGrid, flexDirection: isMobile ? "column" : "row", gap: isMobile ? "60px" : "30px" }}>
+            {[{ img: chairmanImg, name: "Dr. T Rama Krishna Reddy", role: "Chairman", text: "Education is the most powerful weapon which you can use to change the world." },
+              { img: adminImg, name: "Mrs. RK Vimala", role: "Admin Director", text: "We nurture character and competence in a safe, intellectually vibrant home." }
+            ].map((leader, idx) => (
+              <motion.div key={idx} variants={fadeInUp} whileHover={{ y: -8 }} style={styles.mentorCard}>
+                <div style={styles.avatarWrapper}><div style={styles.photoCircle}><img src={leader.img} alt={leader.role} style={styles.imgCover} /></div></div>
+                <p style={styles.quoteBody}>"{leader.text}"</p>
+                <div style={styles.mentorMeta}>
+                  <div style={styles.signatureName}>{leader.name}</div>
+                  <div style={styles.signatureRole}>{leader.role}</div>
                 </div>
-              </div>
-              <h3 style={styles.messageTitle}>Chairman's Perspective</h3>
-              <p style={styles.quoteBody}>
-                "True education is the harmonious development of the physical, mental, and spiritual powers. 
-                At RKS, we don't just teach—we ignite the spark of lifelong inquiry and leadership to shape a better tomorrow."
-              </p>
-              <div style={styles.mentorMeta}>
-                <div style={styles.signatureName}>Dr. T Rama Krishna Reddy</div>
-                <div style={styles.signatureRole}>M.Sc, M.A Lit., M.Ed., Ph.D • <span style={{color: colors.premiumGold}}>Chairman</span></div>
-              </div>
-            </div>
-
-            {/* Admin Director Card */}
-            <div style={styles.mentorCard}>
-              <div style={styles.avatarWrapper}>
-                <div style={styles.photoCircle}>
-                  <img src={adminImg} alt="Admin Director" style={styles.mentorImage} />
-                </div>
-              </div>
-              <h3 style={styles.messageTitle}>Director's Mission</h3>
-              <p style={styles.quoteBody}>
-                "We believe education is character building and life-making. Our commitment is to provide a safe, 
-                intellectually stimulating environment where students grow into compassionate global citizens."
-              </p>
-              <div style={styles.mentorMeta}>
-                <div style={styles.signatureName}>Mrs. RK Vimala</div>
-                <div style={styles.signatureRole}>M.A Lit., M.Ed. • <span style={{color: colors.premiumGold}}>Admin Director</span></div>
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* --- ENHANCED PHILOSOPHY SECTION --- */}
-      <section style={styles.standardSection}>
+      {/* --- PHILOSOPHY --- */}
+      <section style={{ padding: sectionPadding, background: "rgba(241, 245, 249, 0.5)", borderY: "1px solid #e2e8f0" }}>
         <div style={styles.container}>
-          <div style={{ ...styles.splitGrid, ...(isMobile ? styles.flexColumnReverse : {}) }}>
-            <div style={styles.visualSide}>
-              <div style={styles.goldBracketTop} />
-              <div style={styles.goldBracketBottom} />
-              <div style={styles.imageWrapper}>
-                <div style={{ 
-                  ...styles.mainFrame, 
-                  backgroundImage: `url(${rks})`,
-                  height: isMobile ? "300px" : "450px"
-                }}>
-                  <div style={styles.imageOverlay} />
-                  <div style={styles.floatingTag}>SINCE 2011</div>
-                </div>
-              </div>
-              <div style={styles.experienceBadge}>
-                <span style={styles.badgeLarge}>13+</span>
-                <span style={styles.badgeSmall}>Years of<br/>Growth</span>
-              </div>
-            </div>
-
-            <div style={{ ...styles.contentSide, ...(isMobile ? { paddingLeft: 0, marginTop: "40px" } : {}) }}>
+          <div style={{ ...styles.splitGrid, flexDirection: isMobile ? "column" : "row", gap: isMobile ? "30px" : "60px" }}>
+            {!isMobile && <div style={{ flex: 1 }}><PhilosophyImage /></div>}
+            
+            <motion.div initial={{ opacity: 0, x: isMobile ? 0 : 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} style={{ flex: 1.2 }}>
               <span style={styles.preTitle}>THE RKS PROMISE</span>
-              <h2 style={styles.h2}>Nurturing the <span style={styles.goldText}>Next Generation</span></h2>
-              <p style={styles.p}>
-                As a flagship institution under the <strong>RK Group of Educational Institutions</strong>, we 
-                bridge the gap between traditional values and modern technological advancements. Our pedagogy 
-                is meticulously designed to foster critical thinking, emotional intelligence, and global civic responsibility.
-              </p>
-              <div style={styles.featureGrid}>
-                {[
-                  "Concept-Based Pedagogy",
-                  "Holistic Skill Integration",
-                  "Digital-First Learning",
-                  "Elite Sports Academies"
-                ].map((feat, idx) => (
-                  <div key={idx} style={styles.featureItem}>
-                    <span style={styles.bullet}>✦</span> {feat}
-                  </div>
+              <h2 style={{ ...styles.h2, fontSize: isMobile ? "28px" : "38px" }}>Nurturing the <span style={styles.goldText}>Future Leaders</span></h2>
+              <p style={styles.p}>As Tirupati’s premier educational landmark, we blend ancient wisdom with 21st-century technology to create well-rounded global citizens.</p>
+              
+              {isMobile && <PhilosophyImage mobileMode={true} />}
+
+              <div style={{ ...styles.featureGrid, gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr" }}>
+                {["Concept-Based Pedagogy", "Integrated Curriculum", "Digital Smart Classrooms", "Elite Sports Academy"].map((feat, i) => (
+                  <motion.div whileHover={{ x: 5 }} key={i} style={styles.featureItem}>
+                    <span style={{ color: colors.premiumGold, marginRight: "10px" }}>✦</span>{feat}
+                  </motion.div>
                 ))}
               </div>
-              <button style={styles.luxuryBtn} onClick={() => navigate("/about")}>
-                Our Journey
-              </button>
-            </div>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                style={{ ...styles.luxuryBtn, width: isMobile ? "100%" : "auto" }} onClick={() => navigate("/about")}>
+                Explore Our Journey
+              </motion.button>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* --- ACADEMIC PATHWAYS --- */}
-      <section style={styles.darkSection}>
+      {/* --- PATHWAYS --- */}
+      <section style={{ background: colors.midnight, padding: sectionPadding, position: "relative" }}>
+        <div style={styles.darkPattern} />
         <div style={styles.container}>
-          <div style={styles.centeredHeader}>
-            <h2 style={styles.h2Light}>Academic <span style={{color: colors.premiumGold}}>Pathways</span></h2>
-            <p style={styles.pLight}>A rigorous yet flexible roadmap designed for the leaders of tomorrow.</p>
-          </div>
-          <div style={{ ...styles.cardGrid, ...(isMobile ? { gridTemplateColumns: "1fr" } : {}) }}>
-            {[
-              { i: "🌱", t: "Play-Way Foundation", d: "A nurturing environment focused on cognitive development and early social skills." },
-              { i: "📐", t: "Core Integrated Primary", d: "Standard CBSE curriculum enhanced with creative arts and core scientific principles." },
-              { i: "🚀", t: "Elite Secondary Preparation", d: "High-performance tracking with dedicated modules for IIT-JEE & NEET foundations." }
-            ].map((item, idx) => (
-              <div key={idx} style={styles.glassCard}>
-                <div style={styles.cardIcon}>{item.i}</div>
-                <h3 style={styles.cardTitle}>{item.t}</h3>
-                <p style={styles.cardDesc}>{item.d}</p>
-                <div style={styles.cardArrow}>→</div>
-              </div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} style={styles.centeredHeader}>
+            <h2 style={{ color: "#fff", fontWeight: "800" }}>Academic <span style={{ color: colors.premiumGold }}>Pathways</span></h2>
+            <p style={{ color: "rgba(255,255,255,0.5)", marginTop: "10px" }}>Specialized learning tracks for every age group.</p>
+          </motion.div>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer}
+            style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: "20px" }}>
+            {[{ i: "🌱", t: "Foundation", d: "Early cognitive and social development." }, { i: "📐", t: "Primary", d: "CBSE integrated with creative arts." }, { i: "🚀", t: "Elite Prep", d: "Advanced coaching for IIT & NEET." }].map((item, idx) => (
+              <motion.div key={idx} variants={fadeInUp} style={styles.glassCard} whileHover={{ y: -10, background: "rgba(255,255,255,0.1)" }}>
+                <div style={{ fontSize: "32px", marginBottom: "15px" }}>{item.i}</div>
+                <h3 style={{ color: "#fff", fontSize: "20px", marginBottom: "10px" }}>{item.t}</h3>
+                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", lineHeight: "1.5" }}>{item.d}</p>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       <CampusSection />
 
-      <section style={styles.ctaSection}>
-        <div style={{ ...styles.ctaBanner, ...(isMobile ? { textAlign: "center", padding: "40px 20px" } : {}) }}>
-          <div style={styles.ctaContent}>
-            <h2 style={styles.ctaH2}>Admissions Open for 2026-27</h2>
-            <p style={styles.ctaP}>Secure a place for your child in Tirupati's premier learning community.</p>
-          </div>
-          <button style={styles.ctaBtn} onClick={() => navigate("/contact")}>
-            Inquire Now
-          </button>
+      {/* --- CTA --- */}
+      <section style={{ padding: isMobile ? "40px 15px" : "70px 0" }}>
+        <div style={styles.container}>
+          <motion.div initial={{ scale: 0.95, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }} viewport={{ once: true }}
+            style={{ ...styles.ctaBanner, flexDirection: isMobile ? "column" : "row", textAlign: isMobile ? "center" : "left", padding: isMobile ? "30px 20px" : "45px 60px" }}>
+            <div style={{ marginBottom: isMobile ? "25px" : "0" }}>
+              <h2 style={{ color: "#fff", margin: 0, fontSize: isMobile ? "24px" : "32px" }}>Admissions Open 2026-27</h2>
+              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "15px", marginTop: "8px" }}>Join the legacy of excellence in Tirupati.</p>
+            </div>
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} style={styles.ctaBtn} onClick={() => navigate("/contact")}>
+              Apply Online
+            </motion.button>
+          </motion.div>
         </div>
       </section>
     </div>
@@ -195,120 +187,88 @@ function Home() {
 }
 
 const styles = {
-  pageWrapper: { background: "#FFFFFF", overflowX: "hidden" },
-  container: { maxWidth: "1200px", margin: "0 auto", padding: "0 25px" },
-  
-  // Stats
-  statsOverlap: { marginTop: "-40px", position: "relative", zIndex: 10 },
-  statsGrid: {
-    background: "#fff", display: "flex", alignItems: "center",
-    padding: "30px", borderRadius: "4px", boxShadow: "0 20px 50px rgba(0,0,0,0.12)",
-    maxWidth: "1000px", margin: "0 auto", border: `1px solid ${colors.border}`
+  pageWrapper: { 
+    background: `radial-gradient(circle at top right, #FFFFFF 0%, ${colors.bgLight} 100%)`, 
+    overflowX: "hidden", 
+    position: "relative",
+    minHeight: "100vh"
   },
-  statsGridMobile: { flexDirection: "column", gap: "20px" },
-  statBox: { textAlign: "center", flex: 1 },
-  statNum: { display: "block", fontSize: "28px", fontWeight: "900", color: colors.midnight, letterSpacing: "-1px" },
-  statLabel: { fontSize: "12px", color: colors.slate, textTransform: "uppercase", fontWeight: "600", marginTop: "5px", letterSpacing: "0.5px" },
-  statDivider: { width: "1px", height: "40px", background: colors.border },
-
-  // Mentors
-  mentorGrid: { display: "flex", gap: "30px", marginTop: "110px" },
-  mentorCard: {
-    flex: 1, background: "#fff", padding: "90px 40px 45px", borderRadius: "8px",
-    position: "relative", border: `1px solid ${colors.border}`, 
-    transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)", // Modern easing
-    cursor: "pointer",
-    ":hover": {
-      transform: "translateY(-8px)", // Card lift on hover
-    }
+  bgPattern: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundImage: `radial-gradient(${colors.midnight}15 0.5px, transparent 0.5px)`,
+    backgroundSize: "30px 30px",
+    opacity: 0.4,
+    pointerEvents: "none"
   },
-  avatarWrapper: { position: "absolute", top: "-55px", left: "50%", transform: "translateX(-50%)" },
-  photoCircle: {
-    width: "130px", height: "130px", borderRadius: "50%", border: `4px solid ${colors.premiumGold}`,
-    padding: "5px", background: "#fff", boxShadow: "0 10px 30px rgba(0,0,0,0.15)", overflow: "hidden"
+  darkPattern: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundImage: `radial-gradient(rgba(255,255,255,0.05) 0.5px, transparent 0.5px)`,
+    backgroundSize: "40px 40px",
+    pointerEvents: "none"
   },
-  mentorImage: { width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" },
-  messageTitle: { fontSize: "22px", fontWeight: "800", color: colors.midnight, textAlign: "center", marginBottom: "15px" },
-  quoteBody: { fontSize: "15px", color: colors.slate, fontStyle: "italic", lineHeight: "1.8", textAlign: "center", marginBottom: "30px" },
-  mentorMeta: { borderTop: `1px solid ${colors.border}`, paddingTop: "20px", textAlign: "center" },
-  signatureName: { fontSize: "18px", fontWeight: "800", color: colors.midnight },
-  signatureRole: { fontSize: "13px", color: colors.slate, marginTop: "2px", fontWeight: "600" },
-
-  // Philosophy
-  visualSide: { flex: 1, position: "relative" },
-  imageWrapper: { padding: "15px" },
-  mainFrame: { 
-    width: "100%", backgroundSize: "cover", backgroundPosition: "center", 
-    borderRadius: "2px", position: "relative", boxShadow: "30px 30px 0px #f1f5f9" // Deep offset shadow
+  container: { maxWidth: "1140px", margin: "0 auto", position: "relative", zIndex: 2 },
+  statsGrid: { 
+    background: colors.glassWhite, 
+    backdropFilter: "blur(15px)", 
+    display: "flex", 
+    padding: "30px", 
+    borderRadius: "16px", 
+    boxShadow: "0 20px 50px rgba(0,0,0,0.08)", 
+    border: "1px solid rgba(255,255,255,0.5)" 
   },
-  imageOverlay: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,27,54,0.3), transparent)" },
-  goldBracketTop: { position: "absolute", top: 0, left: 0, width: "100px", height: "100px", borderTop: `5px solid ${colors.premiumGold}`, borderLeft: `5px solid ${colors.premiumGold}`, zIndex: 1 },
-  goldBracketBottom: { position: "absolute", bottom: 0, right: 0, width: "100px", height: "100px", borderBottom: `5px solid ${colors.premiumGold}`, borderRight: `5px solid ${colors.premiumGold}`, zIndex: 1 },
-  experienceBadge: { 
-    position: "absolute", bottom: "-20px", left: "40px", background: colors.midnight, 
-    color: "#fff", padding: "15px 25px", display: "flex", alignItems: "center", gap: "15px", zIndex: 5 
+  statNum: { display: "block", fontWeight: "900", color: colors.midnight, lineHeight: 1 },
+  statLabel: { fontSize: "11px", color: colors.slate, textTransform: "uppercase", fontWeight: "800", marginTop: "6px", display: "block", letterSpacing: "1px" },
+  statDivider: { width: "1px", height: "45px", background: "rgba(0,0,0,0.1)", margin: "0 30px" },
+  h2: { color: colors.midnight, fontWeight: "900", margin: 0, lineHeight: 1.2 },
+  goldText: { background: colors.goldGradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" },
+  preTitle: { color: colors.premiumGold, letterSpacing: "3px", fontSize: "11px", fontWeight: "800", display: "block", marginBottom: "8px" },
+  centeredHeader: { textAlign: "center", marginBottom: "45px" },
+  titleUnderline: { height: "4px", width: "50px", background: colors.premiumGold, margin: "15px auto 0", borderRadius: "2px" },
+  mentorGrid: { display: "flex", marginTop: "60px" },
+  mentorCard: { 
+    flex: 1, 
+    background: "#fff", 
+    padding: "60px 30px 35px", 
+    borderRadius: "20px", 
+    position: "relative", 
+    border: "1px solid rgba(0,27,54,0.05)", 
+    textAlign: "center", 
+    boxShadow: "0 15px 35px rgba(0,0,0,0.03)" 
   },
-  badgeLarge: { fontSize: "32px", fontWeight: "900", color: colors.premiumGold },
-  badgeSmall: { fontSize: "10px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "1px" },
-  floatingTag: { position: "absolute", top: "20px", right: "20px", background: colors.premiumGold, color: "#fff", padding: "6px 15px", fontSize: "11px", fontWeight: "800", borderRadius: "2px" },
-
-  contentSide: { flex: 1.2, paddingLeft: "50px" },
-  preTitle: { color: colors.premiumGold, letterSpacing: "4px", fontSize: "12px", fontWeight: "800", marginBottom: "15px", display: "block" },
-  h2: { fontSize: "42px", color: colors.midnight, fontWeight: "900", lineHeight: "1.1", margin: "0 0 20px" },
-  goldText: { color: colors.premiumGold },
-  p: { fontSize: "17px", color: colors.slate, lineHeight: "1.7", marginBottom: "30px" },
-  featureGrid: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "40px" },
+  avatarWrapper: { position: "absolute", top: "-45px", left: "50%", transform: "translateX(-50%)" },
+  photoCircle: { width: "90px", height: "90px", borderRadius: "50%", border: "5px solid #fff", overflow: "hidden", boxShadow: "0 10px 25px rgba(0,0,0,0.12)" },
+  imgCover: { width: "100%", height: "100%", objectFit: "cover" },
+  quoteBody: { fontStyle: "italic", color: colors.slate, marginBottom: "20px", fontSize: "14px", lineHeight: "1.7" },
+  mentorMeta: { borderTop: "1px solid #f1f5f9", paddingTop: "15px" },
+  signatureName: { fontWeight: "800", color: colors.midnight, fontSize: "17px" },
+  signatureRole: { fontSize: "11px", color: colors.premiumGold, fontWeight: "800", marginTop: "3px", textTransform: "uppercase" },
+  splitGrid: { display: "flex", alignItems: "center" },
+  mainFrame: { backgroundSize: "cover", backgroundPosition: "center", borderRadius: "16px", position: "relative", boxShadow: "20px 20px 0px rgba(179,139,69,0.1)" },
+  floatingTag: { position: "absolute", top: "15px", right: "15px", background: colors.premiumGold, color: "#fff", padding: "5px 12px", fontSize: "10px", fontWeight: "900", borderRadius: "4px" },
+  badgeFloating: { position: "absolute", bottom: "-15px", background: colors.midnight, color: "#fff", padding: "12px 20px", borderRadius: "12px", display: "flex", flexDirection: "column", alignItems: "center", boxShadow: "0 15px 30px rgba(0,0,0,0.25)", zIndex: 5 },
+  p: { fontSize: "16px", color: colors.slate, lineHeight: "1.8", marginBottom: "20px" },
+  featureGrid: { display: "grid", gap: "12px", marginBottom: "30px" },
   featureItem: { fontSize: "14px", fontWeight: "700", color: colors.midnight, display: "flex", alignItems: "center" },
-  bullet: { color: colors.premiumGold, marginRight: "10px" },
-  luxuryBtn: { 
-    padding: "18px 45px", background: colors.midnight, color: "#fff", border: "none", 
-    borderRadius: "2px", cursor: "pointer", fontSize: "13px", fontWeight: "800", 
-    textTransform: "uppercase", letterSpacing: "2px", transition: "all 0.3s ease",
-    ":hover": { background: "#003366" }
-  },
-
-  // Academics
-  darkSection: { padding: "100px 0", background: "#001B36" },
-  h2Light: { fontSize: "36px", color: "#fff", fontWeight: "900", marginBottom: "15px" },
-  pLight: { color: "rgba(255,255,255,0.6)", fontSize: "18px", marginBottom: "50px" },
-  cardGrid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "25px" },
+  luxuryBtn: { padding: "16px 35px", background: colors.midnight, color: "#fff", border: "none", borderRadius: "8px", fontWeight: "800", cursor: "pointer", fontSize: "12px", textTransform: "uppercase", letterSpacing: "1.5px", boxShadow: "0 10px 20px rgba(0,27,54,0.15)" },
   glassCard: { 
-    background: "rgba(255,255,255,0.03)", padding: "45px 35px", borderRadius: "4px", 
-    border: "1px solid rgba(255,255,255,0.1)", position: "relative", overflow: "hidden",
-    transition: "background 0.3s ease",
-    ":hover": { background: "rgba(255,255,255,0.06)" }
+    background: "rgba(255,255,255,0.06)", 
+    backdropFilter: "blur(10px)", 
+    padding: "40px 30px", 
+    borderRadius: "16px", 
+    border: "1px solid rgba(255,255,255,0.15)", 
+    transition: "all 0.4s ease" 
   },
-  cardIcon: { fontSize: "40px", marginBottom: "25px" },
-  cardTitle: { color: "#fff", fontSize: "22px", fontWeight: "800", marginBottom: "15px" },
-  cardDesc: { color: "rgba(255,255,255,0.5)", lineHeight: "1.6", fontSize: "15px" },
-  cardArrow: { position: "absolute", bottom: "20px", right: "20px", color: colors.premiumGold, fontSize: "20px" },
-
-  // CTA Section
-  ctaSection: { padding: "60px 0 100px" },
   ctaBanner: { 
-    background: `linear-gradient(135deg, ${colors.midnight} 0%, #003366 100%)`, 
-    padding: "60px 80px", borderRadius: "4px", display: "flex", 
-    justifyContent: "space-between", alignItems: "center", gap: "30px",
-    boxShadow: "0 20px 40px rgba(0,27,54,0.15)"
+    background: `linear-gradient(to right, ${colors.midnight}, #003366)`, 
+    borderRadius: "24px", 
+    display: "flex", 
+    justifyContent: "space-between", 
+    alignItems: "center", 
+    boxShadow: "0 25px 50px rgba(0,27,54,0.4)" 
   },
-  ctaH2: { color: "#fff", fontSize: "32px", fontWeight: "900", margin: 0 },
-  ctaP: { color: "rgba(255,255,255,0.7)", fontSize: "18px", margin: "10px 0 0" },
-  ctaBtn: { 
-    padding: "20px 50px", background: colors.premiumGold, color: colors.midnight, 
-    fontWeight: "900", borderRadius: "4px", border: "none", cursor: "pointer", 
-    fontSize: "14px", textTransform: "uppercase", whiteSpace: "nowrap",
-    transition: "transform 0.2s ease",
-    ":hover": { transform: "scale(1.03)" }
-  },
-
-  // Helper Layouts
-  topSection: { padding: "100px 0 80px" },
-  standardSection: { padding: "100px 0" },
-  centeredHeader: { textAlign: "center", marginBottom: "60px" },
-  titleUnderline: { width: "60px", height: "4px", background: colors.premiumGold, margin: "20px auto 0" },
-  splitGrid: { display: "flex", gap: "80px", alignItems: "center" },
-  flexColumn: { flexDirection: "column" },
-  flexColumnReverse: { flexDirection: "column-reverse" }
+  ctaBtn: { padding: "16px 40px", background: colors.premiumGold, color: "#fff", fontWeight: "900", borderRadius: "8px", border: "none", cursor: "pointer", fontSize: "14px", textTransform: "uppercase", boxShadow: "0 8px 15px rgba(0,0,0,0.2)" },
 };
 
 export default Home;

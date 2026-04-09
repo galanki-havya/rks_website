@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import logo from "../assets/logo.png";
-
 
 const colors = {
   primary: "#002147",
@@ -9,7 +9,9 @@ const colors = {
   white: "#FFFFFF",
   text: "#333333",
   lightGray: "#F8F9FA",
-  shadow: "rgba(0,0,0,0.1)"
+  shadow: "rgba(0,0,0,0.1)",
+  goldGradient: "linear-gradient(135deg, #C9A227 0%, #E5C76B 100%)",
+  tagline: "#4A5568"
 };
 
 function Header() {
@@ -23,13 +25,9 @@ function Header() {
     const handleResize = () => {
       const mobile = window.innerWidth <= 992;
       setIsMobile(mobile);
-      if (!mobile) setMenuOpen(false); // Close menu if screen is resized to desktop
+      if (!mobile) setMenuOpen(false);
     };
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     handleResize();
     window.addEventListener("resize", handleResize);
     window.addEventListener("scroll", handleScroll);
@@ -39,10 +37,7 @@ function Header() {
     };
   }, []);
 
-  // Close menu when route changes
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location]);
+  useEffect(() => { setMenuOpen(false); }, [location]);
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -53,181 +48,114 @@ function Header() {
     { name: "Contact", path: "/contact" },
   ];
 
+  const portalLink = "https://educampus360.com/login";
+
   return (
     <header style={{
       ...styles.headerWrapper,
       paddingTop: isScrolled ? "0px" : (isMobile ? "0px" : "5px"),
       boxShadow: (isScrolled || menuOpen) ? "0 10px 30px rgba(0,0,0,0.1)" : "none",
     }}>
-      
-      {/* Top Utility Bar (Hidden on Mobile Scrolled) */}
       {!isMobile && (
-        <div style={{
-          ...styles.topBar,
-          height: isScrolled ? "0px" : "35px",
-          opacity: isScrolled ? 0 : 1,
-          overflow: "hidden",
-          transition: "all 0.3s ease"
-        }}>
+        <motion.div initial={false} animate={{ height: isScrolled ? 0 : 35, opacity: isScrolled ? 0 : 1 }} style={styles.topBar}>
           <div style={styles.containerFlex}>
             <div style={styles.topBarLeft}>
-              <span>📞 +91 77998 84561</span>
+              <a href="tel:+917799884561" style={styles.topBarLink}>📞 +91 77998 84561</a>
               <span style={styles.separator}>|</span>
-              <span>✉️ admin@nextgenedap.com</span>
+              <a href="mailto:admin@nextgenedap.com" style={styles.topBarLink}>✉️ admin@nextgenedap.com</a>
             </div>
-            <div style={styles.topBarRight}>IIT-JEE | NEET FOUNDATION</div>
+            <div style={styles.topBarRight}>
+              <span style={styles.separator}>|</span>
+              IIT-JEE | NEET FOUNDATION
+            </div>
           </div>
-        </div>
+        </motion.div>
       )}
-
-      {/* Main Navigation Bar */}
       <div style={{...styles.mainHeader, padding: isMobile ? "12px 0" : "10px 0"}}>
         <div style={styles.containerFlex}>
-          
           <Link to="/" style={{ textDecoration: "none" }}>
             <div style={styles.logoContainer}>
-              <img 
-                src={logo} 
-                alt="Logo" 
-                style={{
-                  ...styles.logoImage,
-                  height: isMobile ? "45px" : (isScrolled ? "50px" : "65px")
-                }}
-              />
+              <img src={logo} alt="Logo" style={{...styles.logoImage, height: isMobile ? "45px" : (isScrolled ? "50px" : "70px")}} />
               <div style={styles.brandText}>
-                <h1 style={{...styles.schoolName, fontSize: isMobile ? "16px" : "20px"}}>RKS NEXT GEN SCHOOLS </h1>
+                <h1 style={{...styles.schoolName, fontSize: isMobile ? "16px" : "20px"}}>RKS NEXT GEN SCHOOLS</h1>
+                <p style={{...styles.trustTagline, fontSize: isMobile ? "9px" : "11px", marginTop: isMobile ? "1px" : "2px"}}>(Under Vinayaka Vidhya Mandhir)</p>
                 {!isMobile && <p style={styles.schoolSubtitle}>INTEGRITY • INNOVATION • EXCELLENCE</p>}
               </div>
             </div>
           </Link>
-
-          {/* Desktop Nav */}
           {!isMobile && (
             <nav>
               <ul style={styles.navList}>
                 {navItems.map((item) => (
-                  <li key={item.name}>
-                    <Link
-                      to={item.path}
-                      onMouseEnter={() => setHovered(item.name)}
-                      onMouseLeave={() => setHovered(null)}
-                      style={{
-                        ...styles.navLink,
-                        color: location.pathname === item.path || hovered === item.name ? colors.gold : colors.primary,
-                      }}
-                    >
-                      {item.name}
-                      <div style={{
-                        ...styles.underline,
-                        width: location.pathname === item.path || hovered === item.name ? "100%" : "0%"
-                      }} />
+                  <li key={item.name} style={{ position: "relative" }}>
+                    <Link to={item.path} onMouseEnter={() => setHovered(item.name)} onMouseLeave={() => setHovered(null)} style={{...styles.navLink, color: location.pathname === item.path || hovered === item.name ? colors.gold : colors.primary}}>{item.name}
+                      <motion.div initial={false} animate={{ width: (location.pathname === item.path || hovered === item.name) ? "100%" : "0%" }} style={styles.underline} />
                     </Link>
                   </li>
                 ))}
-                <li>
-                  <Link to="/admissions" style={styles.enrollBtn}>ADMISSIONS</Link>
-                </li>
+                <li><Link to="/admissions" style={styles.admissionsBtn}>ADMISSIONS</Link></li>
+                <li><motion.a href={portalLink} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.05, boxShadow: "0 4px 15px rgba(0,0,0,0.15)" }} whileTap={{ scale: 0.95 }} style={styles.signInBtn}>SIGN IN</motion.a></li>
               </ul>
             </nav>
           )}
-
-          {/* Mobile Menu Toggle */}
           {isMobile && (
-            <button 
-              onClick={() => setMenuOpen(!menuOpen)}
-              style={styles.menuBtn}
-            >
-              <div style={{...styles.burgerLine, transform: menuOpen ? "rotate(45deg) translate(5px, 5px)" : "none"}} />
-              <div style={{...styles.burgerLine, opacity: menuOpen ? 0 : 1}} />
-              <div style={{...styles.burgerLine, transform: menuOpen ? "rotate(-45deg) translate(7px, -7px)" : "none"}} />
+            <button onClick={() => setMenuOpen(!menuOpen)} style={styles.menuBtn}>
+              <motion.div animate={{ rotate: menuOpen ? 45 : 0, y: menuOpen ? 8 : 0 }} style={styles.burgerLine} />
+              <motion.div animate={{ opacity: menuOpen ? 0 : 1 }} style={styles.burgerLine} />
+              <motion.div animate={{ rotate: menuOpen ? -45 : 0, y: menuOpen ? -8 : 0 }} style={styles.burgerLine} />
             </button>
           )}
         </div>
       </div>
-
-      {/* Mobile Drawer */}
-      <div style={{
-        ...styles.mobileDrawer,
-        transform: menuOpen ? "translateX(0)" : "translateX(100%)",
-        opacity: menuOpen ? 1 : 0
-      }}>
-        <ul style={styles.mobileNavList}>
-          {navItems.map((item) => (
-            <li key={item.name} style={styles.mobileNavItem}>
-              <Link to={item.path} style={styles.mobileNavLink}>
-                {item.name}
-              </Link>
-            </li>
-          ))}
-          <li style={{marginTop: "20px"}}>
-            <Link to="/admissions" style={styles.mobileEnrollBtn}>ADMISSIONS 2026-27</Link>
-          </li>
-        </ul>
-      </div>
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} style={styles.mobileDrawer}>
+            <ul style={styles.mobileNavList}>
+              {navItems.map((item, i) => (
+                <motion.li key={item.name} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} style={styles.mobileNavItem}>
+                  <Link to={item.path} style={styles.mobileNavLink}>{item.name}</Link>
+                </motion.li>
+              ))}
+              <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} style={{marginTop: "30px", display: "flex", flexDirection: "column", gap: "12px"}}>
+                <Link to="/admissions" style={styles.mobileAdmissionsBtn}>ADMISSIONS 2026-27</Link>
+                <a href={portalLink} target="_blank" rel="noopener noreferrer" style={styles.mobileSignInBtn}>STUDENT SIGN IN</a>
+              </motion.li>
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
 
 const styles = {
-  headerWrapper: {
-    width: "100%",
-    position: "fixed",
-    top: 0,
-    zIndex: 1000,
-    backgroundColor: colors.white,
-    transition: "all 0.4s ease",
-  },
-  containerFlex: {
-    maxWidth: "1300px",
-    margin: "0 auto",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "0 20px",
-  },
-  topBar: {
-    backgroundColor: colors.primary,
-    color: colors.white,
-    fontSize: "12px",
-    display: "flex",
-    alignItems: "center",
-  },
+  headerWrapper: { width: "100%", position: "fixed", top: 0, zIndex: 1000, backgroundColor: colors.white, transition: "all 0.4s ease" },
+  containerFlex: { maxWidth: "1350px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 20px" },
+  topBar: { backgroundColor: colors.primary, color: colors.white, fontSize: "12px", display: "flex", alignItems: "center", overflow: "hidden" },
   topBarLeft: { display: "flex", gap: "20px" },
-  separator: { opacity: 0.3 },
-  topBarRight: { color: colors.gold, fontWeight: "700", fontSize: "11px" },
-  
+  topBarLink: { color: colors.white, textDecoration: "none", transition: "color 0.3s ease" },
+  separator: { opacity: 0.3, margin: "0 15px" },
+  topBarRight: { color: colors.gold, fontWeight: "700", fontSize: "11px", display: "flex", alignItems: "center" },
   mainHeader: { width: "100%", position: "relative", zIndex: 1001 },
-  logoContainer: { display: "flex", gap: "10px", alignItems: "center" },
-  logoImage: { width: "auto", objectFit: "contain", transition: "height 0.3s ease" },
+  logoContainer: { display: "flex", gap: "12px", alignItems: "center" },
+  logoImage: { width: "auto", objectFit: "contain", transition: "all 0.3s ease" },
   brandText: { display: "flex", flexDirection: "column" },
   schoolName: { margin: 0, color: colors.primary, fontWeight: "900", lineHeight: "1.1" },
-  schoolSubtitle: { fontSize: "8px", color: colors.gold, margin: "2px 0 0 0", fontWeight: "700", letterSpacing: "1px" },
-  
-  // Desktop Styles
+  trustTagline: { margin: 0, color: colors.tagline, fontWeight: "600", fontStyle: "italic", letterSpacing: "0.5px" },
+  schoolSubtitle: { fontSize: "8px", color: colors.gold, margin: "4px 0 0 0", fontWeight: "700", letterSpacing: "1px" },
   navList: { display: "flex", gap: "25px", listStyle: "none", alignItems: "center", margin: 0, padding: 0 },
   navLink: { textDecoration: "none", fontSize: "13px", fontWeight: "700", position: "relative", textTransform: "uppercase" },
-  underline: { height: "2px", backgroundColor: colors.gold, position: "absolute", bottom: "-2px", left: 0, transition: "width 0.3s ease" },
-  enrollBtn: { background: colors.gold, color: colors.primary, padding: "10px 18px", borderRadius: "4px", textDecoration: "none", fontWeight: "800", fontSize: "12px" },
-
-  // Mobile Styles
-  menuBtn: {
-    background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: "6px", padding: "10px"
-  },
-  burgerLine: {
-    width: "25px", height: "3px", backgroundColor: colors.primary, transition: "all 0.3s ease", borderRadius: "2px"
-  },
-  mobileDrawer: {
-    position: "fixed", top: 0, right: 0, width: "80%", height: "100vh", backgroundColor: colors.white,
-    zIndex: 999, transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)", padding: "100px 40px",
-    boxShadow: "-10px 0 30px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column"
-  },
+  underline: { height: "2px", backgroundColor: colors.gold, position: "absolute", bottom: "-4px", left: 0 },
+  admissionsBtn: { border: `1.5px solid ${colors.primary}44`, color: colors.primary, padding: "8px 18px", borderRadius: "5px", textDecoration: "none", fontWeight: "800", fontSize: "12px", transition: "all 0.3s ease" },
+  signInBtn: { background: colors.primary, color: colors.white, padding: "10px 22px", borderRadius: "5px", textDecoration: "none", fontWeight: "800", fontSize: "12px", letterSpacing: "0.5px" },
+  menuBtn: { background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: "5px", padding: "10px" },
+  burgerLine: { width: "25px", height: "3px", backgroundColor: colors.primary, borderRadius: "2px" },
+  mobileDrawer: { position: "fixed", top: 0, right: 0, width: "280px", height: "100vh", backgroundColor: colors.white, zIndex: 999, padding: "100px 30px", boxShadow: "-10px 0 30px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column" },
   mobileNavList: { listStyle: "none", padding: 0, margin: 0 },
-  mobileNavItem: { marginBottom: "25px", borderBottom: `1px solid ${colors.lightGray}`, paddingBottom: "15px" },
-  mobileNavLink: { textDecoration: "none", color: colors.primary, fontSize: "18px", fontWeight: "800", textTransform: "uppercase" },
-  mobileEnrollBtn: {
-    display: "block", textAlign: "center", background: colors.primary, color: colors.white,
-    padding: "15px", borderRadius: "6px", textDecoration: "none", fontWeight: "800"
-  }
+  mobileNavItem: { marginBottom: "20px" },
+  mobileNavLink: { textDecoration: "none", color: colors.primary, fontSize: "18px", fontWeight: "800" },
+  mobileAdmissionsBtn: { textAlign: "center", border: `2px solid ${colors.primary}22`, color: colors.primary, padding: "14px", borderRadius: "8px", textDecoration: "none", fontWeight: "800" },
+  mobileSignInBtn: { textAlign: "center", background: colors.primary, color: colors.white, padding: "14px", borderRadius: "8px", textDecoration: "none", fontWeight: "800" }
 };
 
 export default Header;
