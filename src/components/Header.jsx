@@ -46,6 +46,7 @@ function Header() {
     { name: "Facilities", path: "/facilities" },
     { name: "Gallery", path: "/gallery" },
     { name: "Contact", path: "/contact" },
+    { name: "Admissions", path: "/admissions" }, // Moved admissions here
   ];
 
   const portalLink = "https://educampus360.com/login";
@@ -93,8 +94,20 @@ function Header() {
                     </Link>
                   </li>
                 ))}
-                <li><Link to="/admissions" style={styles.admissionsBtn}>ADMISSIONS</Link></li>
-                <li><motion.a href={portalLink} target="_blank" rel="noopener noreferrer" whileHover={{ scale: 1.05, boxShadow: "0 4px 15px rgba(0,0,0,0.15)" }} whileTap={{ scale: 0.95 }} style={styles.signInBtn}>SIGN IN</motion.a></li>
+                {/* ERP Sign In styled as a normal link */}
+                <li style={{ position: "relative" }}>
+                  <a 
+                    href={portalLink} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    onMouseEnter={() => setHovered("erp")} 
+                    onMouseLeave={() => setHovered(null)} 
+                    style={{...styles.navLink, color: hovered === "erp" ? colors.gold : colors.primary}}
+                  >
+                    ERP SIGN IN
+                    <motion.div initial={false} animate={{ width: hovered === "erp" ? "100%" : "0%" }} style={styles.underline} />
+                  </a>
+                </li>
               </ul>
             </nav>
           )}
@@ -116,9 +129,8 @@ function Header() {
                   <Link to={item.path} style={styles.mobileNavLink}>{item.name}</Link>
                 </motion.li>
               ))}
-              <motion.li initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} style={{marginTop: "30px", display: "flex", flexDirection: "column", gap: "12px"}}>
-                <Link to="/admissions" style={styles.mobileAdmissionsBtn}>ADMISSIONS 2026-27</Link>
-                <a href={portalLink} target="_blank" rel="noopener noreferrer" style={styles.mobileSignInBtn}>STUDENT SIGN IN</a>
+              <motion.li initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.7 }} style={styles.mobileNavItem}>
+                <a href={portalLink} target="_blank" rel="noopener noreferrer" style={styles.mobileNavLink}>ERP SIGN IN</a>
               </motion.li>
             </ul>
           </motion.div>
@@ -144,18 +156,16 @@ const styles = {
   trustTagline: { margin: 0, color: colors.tagline, fontWeight: "600", fontStyle: "italic", letterSpacing: "0.5px" },
   schoolSubtitle: { fontSize: "8px", color: colors.gold, margin: "4px 0 0 0", fontWeight: "700", letterSpacing: "1px" },
   navList: { display: "flex", gap: "25px", listStyle: "none", alignItems: "center", margin: 0, padding: 0 },
-  navLink: { textDecoration: "none", fontSize: "13px", fontWeight: "700", position: "relative", textTransform: "uppercase" },
+  navLink: { textDecoration: "none", fontSize: "13px", fontWeight: "700", position: "relative", textTransform: "uppercase", transition: "color 0.3s ease" },
   underline: { height: "2px", backgroundColor: colors.gold, position: "absolute", bottom: "-4px", left: 0 },
-  admissionsBtn: { border: `1.5px solid ${colors.primary}44`, color: colors.primary, padding: "8px 18px", borderRadius: "5px", textDecoration: "none", fontWeight: "800", fontSize: "12px", transition: "all 0.3s ease" },
-  signInBtn: { background: colors.primary, color: colors.white, padding: "10px 22px", borderRadius: "5px", textDecoration: "none", fontWeight: "800", fontSize: "12px", letterSpacing: "0.5px" },
+  
+  // Removed specific button styles, buttons now use navLink styles
   menuBtn: { background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: "5px", padding: "10px" },
   burgerLine: { width: "25px", height: "3px", backgroundColor: colors.primary, borderRadius: "2px" },
   mobileDrawer: { position: "fixed", top: 0, right: 0, width: "280px", height: "100vh", backgroundColor: colors.white, zIndex: 999, padding: "100px 30px", boxShadow: "-10px 0 30px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column" },
   mobileNavList: { listStyle: "none", padding: 0, margin: 0 },
   mobileNavItem: { marginBottom: "20px" },
   mobileNavLink: { textDecoration: "none", color: colors.primary, fontSize: "18px", fontWeight: "800" },
-  mobileAdmissionsBtn: { textAlign: "center", border: `2px solid ${colors.primary}22`, color: colors.primary, padding: "14px", borderRadius: "8px", textDecoration: "none", fontWeight: "800" },
-  mobileSignInBtn: { textAlign: "center", background: colors.primary, color: colors.white, padding: "14px", borderRadius: "8px", textDecoration: "none", fontWeight: "800" }
 };
 
 export default Header;
