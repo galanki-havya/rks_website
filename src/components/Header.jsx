@@ -103,7 +103,7 @@ function Header() {
                     onMouseLeave={() => setHovered(null)} 
                     style={{...styles.navLink, color: hovered === "erp" ? colors.gold : colors.primary}}
                   >
-                    ERP SIGN IN
+                    ERP LOGIN
                     <motion.div initial={false} animate={{ width: hovered === "erp" ? "100%" : "0%" }} style={styles.underline} />
                   </a>
                 </li>
