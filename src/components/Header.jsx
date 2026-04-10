@@ -46,7 +46,7 @@ function Header() {
     { name: "Facilities", path: "/facilities" },
     { name: "Gallery", path: "/gallery" },
     { name: "Contact", path: "/contact" },
-    { name: "Admissions", path: "/admissions" }, // Moved admissions here
+    { name: "Admissions", path: "/admissions" },
   ];
 
   const portalLink = "https://educampus360.com/login";
@@ -94,7 +94,6 @@ function Header() {
                     </Link>
                   </li>
                 ))}
-                {/* ERP Sign In styled as a normal link */}
                 <li style={{ position: "relative" }}>
                   <a 
                     href={portalLink} 
